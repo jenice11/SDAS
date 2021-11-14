@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/yellow"
+    android:padding="10dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/navprofile"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_account_circle_black_24dp"
+        app:civ_border_width="0dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:id="@+id/name"
+        android:textSize="15sp"
+        android:fontFamily="@font/bellb"
+        android:layout_gravity="center"
+        android:textColor="#474444" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="altait@gmail.com"
+        android:id="@+id/email"
+        android:fontFamily="@font/bellb"
+        android:textSize="18dp"
+        android:textColor="#474444" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="employeeid"
+        android:fontFamily="@font/bellb"
+        android:id="@+id/empid"
+        android:textSize="18dp"
+        android:textColor="#474444" />
+
+</LinearLayout>
