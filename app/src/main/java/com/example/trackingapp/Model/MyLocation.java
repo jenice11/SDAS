@@ -9,15 +9,15 @@ public class MyLocation {
     private int locationNo = 1;
     private static int nextLocationNo = 1;
 
-    @Override
-    public String toString() {
-        locationNo = nextLocationNo;
-        nextLocationNo++;
-        return "Location No" + locationNo +
-                ": latitude='" + latitude + '\'' +
-                ", longitude='" + longitude + '\'' +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        locationNo = nextLocationNo;
+//        nextLocationNo++;
+//        return "Location No" + locationNo +
+//                ": latitude='" + latitude + '\'' +
+//                ", longitude='" + longitude + '\'' +
+//                '}';
+//    }
 
     public MyLocation() {
     }
