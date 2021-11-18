@@ -53,6 +53,8 @@ import com.google.maps.android.SphericalUtil;
 import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import io.paperdb.Paper;
 
@@ -71,7 +73,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private static final int MY_REQUEST_CODE = 7117;
-    String userID;
 
     /////////////
 
@@ -79,6 +80,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     RecyclerView recycler_friend_list;
     IFirebaseLoadDone firebaseLoadDone;
     DatabaseReference user_information;
+    DatabaseReference trackingUserLocation;
+    List<MyLocation> locationList = new ArrayList<>();
+    List<String> userList = new ArrayList<>();
 
 //    MaterialSearchBar searchBar;
 
@@ -135,51 +139,53 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         Paper.init(this);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
 
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
         user_information.keepSynced(true);
+        trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
 
-    }
 
-    //Testing firebase get data
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        trackingUserLocation.orderByKey()
+                //.equalTo(firebaseUser.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.getValue() == null)
+                        {
 
-        if(requestCode == MY_REQUEST_CODE)
-        {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            if(resultCode == RESULT_OK){
-                final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                user_information.orderByKey()
-                        .equalTo(firebaseUser.getUid())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.getValue() == null)
-                                {
-                                    if(!dataSnapshot.child(firebaseUser.getUid()).exists())
-                                    {
-                                        Common.loggedUser = new User(firebaseUser.getUid(),firebaseUser.getEmail());
+                        }
+                        else{
+//                            Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+                            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                                String key = postSnapshot.getKey();
+                                userList.add(key);
 
-                                        user_information.child(Common.loggedUser.getUid())
-                                                .setValue(Common.loggedUser);
-                                    }
-                                }
-
-                                else{
-                                    Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
-                                }
+                                Log.d(TAG, "USER ID KEY: " + key);
+                                MyLocation location = postSnapshot.getValue(MyLocation.class);
+                                locationList.add(location);
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+//                            for (String list : userList) {
+//                                System.out.println(userList);
+//                            }
+//
+                            for(MyLocation location: locationList) {
+                                Log.d(TAG, "<< " + location + " >>");
+                                Log.d(TAG, "<<Test " + location.getLatitude() + " >>");
                             }
-                        });
-            }
-        }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
+
+
 
     public void onClick(View v) {
         if(R.id.trackButton == v.getId()){
