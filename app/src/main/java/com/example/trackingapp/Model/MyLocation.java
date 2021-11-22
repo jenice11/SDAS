@@ -5,7 +5,8 @@ public class MyLocation {
     private boolean complete,fromMockProvider;
     private String provider;
     private long time,elapsedRealtimeNanos;
-    private double latitude,longitude;
+    private double latitude;
+    private double longitude;
     private int locationNo = 1;
     private static int nextLocationNo = 1;
 

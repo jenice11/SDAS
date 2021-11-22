@@ -209,25 +209,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //
 //                            }
                             double latitudeA=0, longitudeA=0, latitudeB=0, longitudeB=0, x = 0, y = 0;
-                            float[] results = new float[1];
-                            double result = 0;
-
 //
                             for(MyLocation location: locationList) {
 
-                                Log.d(TAG, "<<1 x=" + x + "y=" + y);
+                                Log.d(TAG, "<<1 x=" + x + " y=" + y);
 
                                 if(Double.valueOf(latitudeA).equals(x) && Double.valueOf(longitudeA).equals(y)){
-                                    Log.d(TAG, "<<2 If lat and long A same then put B>>");
                                     latitudeB = Double.valueOf(location.getLatitude());
                                     longitudeB = Double.valueOf(location.getLongitude());
-                                    Log.d(TAG, "<<3 == LatB" + latitudeB + "LongB" + longitudeB);
+                                    Log.d(TAG, "<<3 == LatB= " + latitudeB + "LongB= " + longitudeB);
                                 }
                                 else{
                                     latitudeA = Double.valueOf(location.getLatitude());
                                     longitudeA = Double.valueOf(location.getLongitude());
-                                    Log.d(TAG, "<<4If lat long A no exist, add>>");
-                                    Log.d(TAG, "<<3 == LatA" + latitudeA + "LongA" + longitudeA);
+                                    Log.d(TAG, "<<3 == LatA= " + latitudeA + "LongA= " + longitudeA);
                                 }
 
                                 x = Double.valueOf(location.getLatitude());
@@ -248,10 +243,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //                                    Log.d(TAG, "<<4If lat long A no exist, add>>");
 //                                }
                             }
-                            getDistance(latitudeA,longitudeA, latitudeB, longitudeB, result);
-                            Log.d(TAG, "<<5Distance results: =  " + results + " >>");
 
+//                            latitudeA = 3.8255664040574278;
+//                            longitudeA = 103.3282252768507;
+//                            latitudeB = 3.825554361011295;
+//                            longitudeB = 103.32823265292521;
+                            //Total distance: 1.53 m (5.02 ft)
 
+//                            Log.d(TAG, "<<5 Method 1: Distance results: =  " + results + " >>");
+
+//                            Log.d(TAG, "<< Final == LatA= " + latitudeA + " LongA= " + longitudeA);
+//                            Log.d(TAG, "<< Final == LatB= " + latitudeB + " LongB= " + longitudeB);
+
+                            Log.d(TAG, "<<FInal - Distance results: =  " + calculateDistance(latitudeA,longitudeA, latitudeB, longitudeB) + " >>");
+                            calculateDistance(latitudeA,longitudeA, latitudeB, longitudeB);
 
                         }
                     }
@@ -263,63 +268,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
-    public static double getDistance (double startLatitude,
-                                      double startLongitude,
-                                      double endLatitude,
-                                      double endLongitude,
-                                      double result){
-        Location loc1 = new Location("");
-        loc1.setLatitude(startLatitude);
-        loc1.setLongitude(startLongitude);
+    public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+        float[] results = new float[3];
+        Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
+//        Log.d(TAG, "<<Inside method - Distance results: =  " + results[0] + " >>");
 
-        Location loc2 = new Location("");
-        loc2.setLatitude(endLatitude);
-        loc2.setLongitude(endLongitude);
-
-        result = loc1.distanceTo(loc2);
-
-        Log.d(TAG, "<<Distance results: =  " + result + " >>");
-        return result;
-
+        return results[0];
     }
-
-//    double distance_between(Location l1, Location l2)
-//    {
-//        //float results[] = new float[1];
-//    /* Doesn't work. returns inconsistent results
-//    Location.distanceBetween(
-//            l1.getLatitude(),
-//            l1.getLongitude(),
-//            l2.getLatitude(),
-//            l2.getLongitude(),
-//            results);
-//            */
-//        double lat1=l1.getLatitude();
-//        double lon1=l1.getLongitude();
-//        double lat2=l2.getLatitude();
-//        double lon2=l2.getLongitude();
-//        double R = 6371; // km
-//        double dLat = (lat2-lat1)*Math.PI/180;
-//        double dLon = (lon2-lon1)*Math.PI/180;
-//        lat1 = lat1*Math.PI/180;
-//        lat2 = lat2*Math.PI/180;
-//
-//        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-//                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-//        double d = R * c * 1000;
-//
-//        log_write("dist betn "+
-//                d + " " +
-//                l1.getLatitude()+ " " +
-//                l1.getLongitude() + " " +
-//                l2.getLatitude() + " " +
-//                l2.getLongitude()
-//        );
-//
-//        return d;
-//    }
-
 
 
     public void onClick(View v) {
@@ -343,61 +298,4 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Tracking stopped", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
-
-
-//    private void coordinates() {
-//        mDatabase.child("users").child(mAuth.getCurrentUser()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                if (!task.isSuccessful()) {
-//                    Log.e("firebase", "Error getting data", task.getException());
-//                }
-//                else {
-//                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
-//                }
-//            }
-//        })
-//
-//        Location locationA = new Location("point A");
-//
-//        locationA.setLatitude(latA);
-//        locationA.setLongitude(lngA);
-//
-//        Location locationB = new Location("point B");
-//
-//        locationB.setLatitude(latB);
-//        locationB.setLongitude(lngB);
-//
-//        float distance = locationA.distanceTo(locationB);
-//
-//        // Attach a listener to read the data at our posts reference
-//        mDatabase.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Post post = dataSnapshot.getValue(HomeActivity.class);
-//                System.out.println(post);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                System.out.println("The read failed: " + databaseError.getCode());
-//            }
-//        });
-//
-//    }
-//
-//    public static void distanceBetween (double startLatitude, double startLongitude, double endLatitude, double endLongitude, float[] results){
-//
-//    }
-
-
-
-//    private void calculateDistance() {
-//        float[] results = new float[3];
-//        Location.distanceBetween(self.latitude, self.longitude, position.latitude, position.longitude, results);
-//        b.putString("distance_in_meters", String.valueOf(results[0]));
-//    }
 }
