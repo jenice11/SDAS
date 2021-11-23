@@ -113,11 +113,14 @@ public class MainActivity extends AppCompatActivity {
 
                                         user_information.child(Common.loggedUser.getUid())
                                                 .setValue(Common.loggedUser);
+
                                     }
                                 }
-
                                 else{
                                     Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+                                    DatabaseReference publicLocation;
+                                    publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+                                    publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
                                 }
 
                                 Paper.book().write(Common.USER_UID_SAVE_KEY,Common.loggedUser.getUid());

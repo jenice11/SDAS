@@ -42,7 +42,6 @@
         <activity
             android:name=".TrackingActivity"
             android:label="@string/title_activity_tracking" />
-        <activity android:name=".FriendRequestActivity" />
 
         <service android:name=".Service.MyFCMService">
             <intent-filter>
@@ -58,7 +57,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".AllPeopleActivity" />
         <activity
             android:name=".HomeActivity"
             android:label="HomeActivity"

@@ -9,6 +9,16 @@ public class MyLocation {
     private double longitude;
     private int locationNo = 1;
     private static int nextLocationNo = 1;
+    private boolean trackStatus;
+
+    public boolean isTrackStatus() {
+        return trackStatus;
+    }
+
+    public void setTrackStatus(boolean trackStatus) {
+        this.trackStatus = trackStatus;
+    }
+
 
 //    @Override
 //    public String toString() {

@@ -100,8 +100,8 @@ public class TrackingService extends Service {
 
     private void buildLocationRequest() {
         locationRequest = new LocationRequest();
-        locationRequest.setSmallestDisplacement(10f);
-        locationRequest.setFastestInterval(3000);
+        locationRequest.setSmallestDisplacement(0.1f);
+        locationRequest.setFastestInterval(5000);
         locationRequest.setInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -139,8 +139,10 @@ public class TrackingService extends Service {
 
     @Override
     public void onDestroy() {
-
-        Log.d(TAG, "Stopped tracking log");
+        DatabaseReference publicLocation;
+        publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+        publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+        Log.d(TAG, "Stopped tracking log + firebase status false");
     }
 
     private void onNewLocation(Location location) {

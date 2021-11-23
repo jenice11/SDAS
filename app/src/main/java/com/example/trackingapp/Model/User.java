@@ -7,12 +7,15 @@ public class User {
     private String uid,email;
     private HashMap<String,User> acceptList;
 
+    private String trackStatus;
+
     public User(){
     }
 
     public User(String uid, String email) {
         this.uid = uid;
         this.email = email;
+
         this.acceptList = new HashMap<>();
     }
 

@@ -27,22 +27,23 @@
         android:textColor="#474444" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="altait@gmail.com"
         android:id="@+id/email"
-        android:fontFamily="@font/bellb"
-        android:textSize="18dp"
-        android:textColor="#474444" />
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="employeeid"
         android:fontFamily="@font/bellb"
+        android:text="test@gmail.com"
+        android:textColor="#474444"
+        android:textSize="18dp" />
+
+    <TextView
         android:id="@+id/empid"
-        android:textSize="18dp"
-        android:textColor="#474444" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/bellb"
+        android:text="id"
+        android:textColor="#474444"
+        android:textSize="18dp" />
 
 </LinearLayout>

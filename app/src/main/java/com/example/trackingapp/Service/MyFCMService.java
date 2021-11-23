@@ -52,6 +52,7 @@ public class MyFCMService extends FirebaseMessagingService {
         User user = new User();
         user.setUid(data.get(Common.FROM_UID));
         user.setEmail(data.get(Common.FROM_NAME));
+//        user.setTrackStatus(data.get(Common.TRACK_STATUS));
 
         friend_request.child(user.getUid()).setValue(user);
     }
