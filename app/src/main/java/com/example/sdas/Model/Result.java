@@ -1,4 +1,4 @@
-package com.example.trackingapp.Model;
+package com.example.sdas.Model;
 
 public class Result {
 

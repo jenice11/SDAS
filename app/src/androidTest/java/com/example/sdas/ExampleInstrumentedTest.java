@@ -1,4 +1,4 @@
-package com.example.trackingapp;
+package com.example.sdas;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.example.trackingapp", appContext.getPackageName());
+        assertEquals("com.example.sdas", appContext.getPackageName());
     }
 }

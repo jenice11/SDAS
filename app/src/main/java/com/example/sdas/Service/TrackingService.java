@@ -1,10 +1,9 @@
-package com.example.trackingapp.Service;
+package com.example.sdas.Service;
 
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,41 +13,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.trackingapp.HomeActivity;
-import com.example.trackingapp.Model.User;
-import com.example.trackingapp.R;
-import com.example.trackingapp.Utils.Common;
-import com.example.trackingapp.Utils.NotificationHelper;
+import com.example.sdas.R;
+import com.example.sdas.Utils.Common;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.RemoteMessage;
-
-import java.util.Map;
-import java.util.Random;
-
-import io.paperdb.Paper;
 
 public class TrackingService extends Service {
     private LocationRequest locationRequest;

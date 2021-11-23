@@ -1,4 +1,4 @@
-package com.example.trackingapp;
+package com.example.sdas;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.trackingapp.Model.User;
-import com.example.trackingapp.Utils.Common;
+import com.example.sdas.Model.User;
+import com.example.sdas.Utils.Common;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnFailureListener;

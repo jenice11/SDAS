@@ -1,4 +1,4 @@
-package com.example.trackingapp.Service;
+package com.example.sdas.Service;
 
 import static android.content.ContentValues.TAG;
 
@@ -10,12 +10,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.trackingapp.Model.MyLocation;
-import com.example.trackingapp.Utils.Common;
-import com.google.android.gms.location.LocationRequest;
+import com.example.sdas.Model.MyLocation;
+import com.example.sdas.Utils.Common;
 import com.google.android.gms.location.LocationResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,9 +25,9 @@ import java.util.List;
 import io.paperdb.Paper;
 
 public class MyLocationReceiver extends BroadcastReceiver {
-    public static final String ACTION = "com.example.trackingapp.UPDATE_LOCATION";
+    public static final String ACTION = "com.example.sdas.UPDATE_LOCATION";
 
-    DatabaseReference publicLocation, user_information;;
+    DatabaseReference publicLocation;
     String uid;
     DatabaseReference trackingUserLocation;
     List<MyLocation> locationList = new ArrayList<>();
@@ -70,7 +67,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
                     Log.d(TAG, "New update "+location);
                 }
                 calculateDistance();
-
             }
 
         }
@@ -78,9 +74,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
     public void calculateDistance(){
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+//        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         trackingUserLocation.orderByKey()
                 //.equalTo(firebaseUser.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -173,7 +168,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
     public static double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
         float[] results = new float[3];
         Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
-//        Log.d(TAG, "<<Inside method - Distance results: =  " + results[0] + " >>");
 
         return results[0];
     }

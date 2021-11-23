@@ -1,12 +1,12 @@
 
-package com.example.trackingapp.Utils;
+package com.example.sdas.Utils;
 
 
 import android.content.Context;
 import android.location.Location;
 import android.preference.PreferenceManager;
 
-import com.example.trackingapp.R;
+import com.example.sdas.R;
 
 import java.text.DateFormat;
 import java.util.Date;

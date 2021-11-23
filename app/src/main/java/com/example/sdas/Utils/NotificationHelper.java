@@ -1,4 +1,4 @@
-package com.example.trackingapp.Utils;
+package com.example.sdas.Utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,11 +10,10 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.trackingapp.R;
-import com.google.firebase.messaging.RemoteMessage;
+import com.example.sdas.R;
 
 public class NotificationHelper extends ContextWrapper {
-    private static final String TRACKING_ID = "com.example.trackingapp";
+    private static final String TRACKING_ID = "com.example.sdas";
     private  static final String TRACKING_NAME = "Tracking";
 
     private NotificationManager manager;

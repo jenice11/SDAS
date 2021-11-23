@@ -1,10 +1,9 @@
-package com.example.trackingapp;
+package com.example.sdas;
 
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -22,21 +20,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.trackingapp.Interface.IFirebaseLoadDone;
-import com.example.trackingapp.Model.MyLocation;
-import com.example.trackingapp.Model.User;
-import com.example.trackingapp.Service.TrackingService;
-import com.example.trackingapp.Utils.Common;
-import com.example.trackingapp.ViewHolder.UserViewHolder;
+import com.example.sdas.Interface.IFirebaseLoadDone;
+import com.example.sdas.Model.MyLocation;
+import com.example.sdas.Model.User;
+import com.example.sdas.Service.TrackingService;
+import com.example.sdas.Utils.Common;
+import com.example.sdas.ViewHolder.UserViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +64,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     List<String> userList = new ArrayList<>();
 
 //    MaterialSearchBar searchBar;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,54 +113,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-
         Paper.init(this);
-
-
-
-//        trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-//
-//
-//        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//        trackingUserLocation.orderByKey()
-//                //.equalTo(firebaseUser.getUid())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if(dataSnapshot.getValue() == null)
-//                        {
-//
-//                        }
-//                        else{
-////                            Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
-//                            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-//                                String key = postSnapshot.getKey();
-//                                userList.add(key);
-//
-//                                Log.d(TAG, "USER ID KEY: " + key);
-//                                MyLocation location = postSnapshot.getValue(MyLocation.class);
-//                                locationList.add(location);
-//                            }
-//
-////                            for (String list : userList) {
-////                                System.out.println(userList);
-////                            }
-////
-//                            for(MyLocation location: locationList) {
-//                                Log.d(TAG, "<< " + location + " >>");
-//                                Log.d(TAG, "<<Test " + location.getLatitude() + " >>");
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
     }
-
-
 
     public void onClick(View v) {
         if(R.id.trackButton == v.getId()){
@@ -195,5 +141,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Tracking stopped", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DatabaseReference publicLocation;
+        publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+        publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+        Log.d(TAG, "App Destroyed + firebase status false");
     }
 }

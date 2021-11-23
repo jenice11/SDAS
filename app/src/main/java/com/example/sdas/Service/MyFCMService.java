@@ -1,22 +1,19 @@
-package com.example.trackingapp.Service;
+package com.example.sdas.Service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.IBinder;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.example.trackingapp.Model.User;
-import com.example.trackingapp.R;
-import com.example.trackingapp.Utils.Common;
-import com.example.trackingapp.Utils.NotificationHelper;
+import com.example.sdas.Model.User;
+import com.example.sdas.R;
+import com.example.sdas.Utils.Common;
+import com.example.sdas.Utils.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;

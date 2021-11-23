@@ -1,4 +1,4 @@
-package com.example.trackingapp.ViewHolder;
+package com.example.sdas.ViewHolder;
 
 import android.view.View;
 import android.widget.TextView;
@@ -6,8 +6,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.trackingapp.Interface.IRecyclerItemClickListener;
-import com.example.trackingapp.R;
+import com.example.sdas.Interface.IRecyclerItemClickListener;
+import com.example.sdas.R;
 
 public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView txt_user_email;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.trackingapp">
+    package="com.example.sdas">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <service
-            android:name=".Service.TrackingService"
+            android:name="com.example.sdas.Service.TrackingService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE">
@@ -40,17 +40,17 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".TrackingActivity"
+            android:name="com.example.sdas.TrackingActivity"
             android:label="@string/title_activity_tracking" />
 
-        <service android:name=".Service.MyFCMService">
+        <service android:name="com.example.sdas.Service.MyFCMService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
 <!--        <receiver android:name=".Service.MyLocationReceiver" />-->
-        <receiver android:name=".Service.MyLocationReceiver"  android:exported="true">
+        <receiver android:name="com.example.sdas.Service.MyLocationReceiver"  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
@@ -58,11 +58,11 @@
         </receiver>
 
         <activity
-            android:name=".HomeActivity"
+            android:name="com.example.sdas.HomeActivity"
             android:label="HomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.sdas.MainActivity"
             android:theme="@style/BackgroundTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

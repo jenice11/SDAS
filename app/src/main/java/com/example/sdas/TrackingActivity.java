@@ -1,13 +1,12 @@
-package com.example.trackingapp;
+package com.example.sdas;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
-import android.location.Location;
 import android.os.Bundle;
 
-import com.example.trackingapp.Model.MyLocation;
-import com.example.trackingapp.Utils.Common;
+import com.example.sdas.Model.MyLocation;
+import com.example.sdas.Utils.Common;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

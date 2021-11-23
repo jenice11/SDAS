@@ -1,14 +1,12 @@
-package com.example.trackingapp.Utils;
+package com.example.sdas.Utils;
 
-import com.example.trackingapp.Model.User;
-import com.example.trackingapp.Remote.IFCMService;
-import com.example.trackingapp.Remote.RetrofitClient;
+import com.example.sdas.Model.User;
+import com.example.sdas.Remote.IFCMService;
+import com.example.sdas.Remote.RetrofitClient;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import retrofit2.Retrofit;
 
 public class Common {
 
