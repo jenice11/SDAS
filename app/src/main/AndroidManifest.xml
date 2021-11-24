@@ -9,8 +9,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -21,12 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <service
-            android:name="com.example.sdas.Service.TrackingService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-        </service>
+
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -40,29 +36,40 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.example.sdas.TrackingActivity"
+            android:name=".TrackingActivity"
             android:label="@string/title_activity_tracking" />
 
-        <service android:name="com.example.sdas.Service.MyFCMService">
+        <service
+            android:name=".Service.MyFCMService"
+            android:enabled="true"
+            android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+<!--            </intent-filter>-->
+        </service> <!-- <receiver android:name=".Service.MyLocationReceiver" /> -->
+        <receiver
+            android:name=".Service.MyLocationReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-<!--        <receiver android:name=".Service.MyLocationReceiver" />-->
-        <receiver android:name="com.example.sdas.Service.MyLocationReceiver"  android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
             </intent-filter>
         </receiver>
+        <service
+            android:name=".Service.TrackingService"
+            android:enabled="true"
+            android:exported="true">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+            <!--            </intent-filter>-->
+        </service>
 
         <activity
-            android:name="com.example.sdas.HomeActivity"
+            android:name=".HomeActivity"
             android:label="HomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.example.sdas.MainActivity"
+            android:name=".MainActivity"
             android:theme="@style/BackgroundTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

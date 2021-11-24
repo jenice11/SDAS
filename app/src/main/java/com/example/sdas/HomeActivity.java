@@ -128,7 +128,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 //            startService(new Intent(this, TrackingService.class));
 //            Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
-//            coordinates();
         }
 
         if(R.id.stopButton == v.getId()){

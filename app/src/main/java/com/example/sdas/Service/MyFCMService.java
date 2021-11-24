@@ -1,11 +1,14 @@
 package com.example.sdas.Service;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -98,5 +101,5 @@ public class MyFCMService extends FirebaseMessagingService {
                     .getReference(Common.TOKENS);
             tokens.child(user.getUid()).setValue(s);
         }
-    }
+        Log.d(TAG, "<<Token: =  " + s + " >>"); }
 }

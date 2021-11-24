@@ -20,6 +20,7 @@ public class Common {
     public static final String TO_NAME = "ToName";
     public static final String FRIEND_REQUEST = "FriendRequests";
     public static final String PUBLIC_LOCATION = "PublicLocation";
+    public static final String HISTORY = "History";
     public static final String TRACK_STATUS = "false";
     public static User loggedUser;
     public static User trackingUser;
