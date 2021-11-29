@@ -3,6 +3,9 @@ package com.example.sdas;
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,15 +21,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sdas.Interface.IFirebaseLoadDone;
+import com.example.sdas.Model.History;
 import com.example.sdas.Model.MyLocation;
 import com.example.sdas.Model.User;
 import com.example.sdas.Service.TrackingService;
 import com.example.sdas.Utils.Common;
-import com.example.sdas.ViewHolder.UserViewHolder;
+import com.example.sdas.ViewHolder.HistoryAdapter;
+//import com.example.sdas.ViewHolder.UserViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -44,6 +51,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
 
+    //history
+    private RecyclerView recyclerView;
+    HistoryAdapter adapter;
+    DatabaseReference user_history;
+
+
     TextView name, email, empid;
     ImageView navprofile;
     Toolbar toolbar;
@@ -55,13 +68,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     /////////////
 
-    FirebaseRecyclerAdapter<User, UserViewHolder> adapter, searchAdapter;
+//    FirebaseRecyclerAdapter<User, UserViewHolder> adapter, searchAdapter;
     RecyclerView recycler_friend_list;
     IFirebaseLoadDone firebaseLoadDone;
     DatabaseReference user_information;
     DatabaseReference trackingUserLocation;
     List<MyLocation> locationList = new ArrayList<>();
     List<String> userList = new ArrayList<>();
+
 
 //    MaterialSearchBar searchBar;
 
@@ -76,6 +90,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mTrackButton.setOnClickListener(this);
         mStopButton = findViewById(R.id.stopButton);
         mStopButton.setOnClickListener(this);
+        recyclerView = findViewById(R.id.recycler_all_history);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open, R.string.close);
@@ -87,6 +102,34 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         email = (TextView) navView.findViewById(R.id.email);
         empid = (TextView) navView.findViewById(R.id.empid);
         navprofile = (ImageView) navView.findViewById(R.id.navprofile);
+
+        // Create a instance of the database and get
+        // its reference
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+
+        // To display the Recycler view linearly
+        recyclerView.setLayoutManager(
+                new LinearLayoutManager(this));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
+        Log.d(TAG, "<< Before launch recycle view >>");
+
+        // It is a class provide by the FirebaseUI to make a
+        // query in the database to fetch appropriate data
+        FirebaseRecyclerOptions<History> options
+                = new FirebaseRecyclerOptions.Builder<History>()
+                .setQuery(user_history, History.class)
+                .build();
+        // Connecting object of required Adapter class to
+        // the Adapter class itself
+        adapter = new HistoryAdapter(options);
+        // Connecting Adapter class with the Recycler view*/
+        recyclerView.setAdapter(adapter);
+
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
 
         ActivityCompat.requestPermissions(HomeActivity.this,
                 new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
@@ -114,6 +157,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         Paper.init(this);
+
     }
 
     public void onClick(View v) {
@@ -122,7 +166,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //                startForegroundService(new Intent(this, TrackingService.class));
 //                Toast.makeText(this, "Start tracking now Fore", Toast.LENGTH_SHORT).show();
 //            } else {
-                startService(new Intent(this, TrackingService.class));
+            Intent ishintent = new Intent(this, TrackingService.class);
+            PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
+            AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            alarm.cancel(pintent);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
+
+//                startService(new Intent(this, TrackingService.class));
                 Toast.makeText(this, "Start tracking now Intent", Toast.LENGTH_SHORT).show();
 //            }
 
@@ -150,4 +200,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
         Log.d(TAG, "App Destroyed + firebase status false");
     }
+    // Function to tell the app to start getting
+    // data from database on starting of the activity
+    @Override protected void onStart()
+    {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    // Function to tell the app to stop getting
+    // data from database on stopping of the activity
+    @Override protected void onStop()
+    {
+        super.onStop();
+        adapter.stopListening();
+    }
+
 }

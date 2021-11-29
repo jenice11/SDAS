@@ -36,6 +36,7 @@ dependencies {
     //Libraries
     implementation 'com.google.firebase:firebase-database:16.0.6'
     implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.firebaseui:firebase-ui-database:6.2.1'
     implementation platform('com.google.firebase:firebase-bom:26.2.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-messaging:21.0.0'

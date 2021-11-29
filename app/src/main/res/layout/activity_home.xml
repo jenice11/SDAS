@@ -35,12 +35,12 @@
 
     </LinearLayout>
 
-    <com.mancj.materialsearchbar.MaterialSearchBar
-        android:id="@+id/material_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:mt_hint="Enter Email"
-        app:mt_maxSuggestionsCount="50"/>
+<!--    <com.mancj.materialsearchbar.MaterialSearchBar-->
+<!--        android:id="@+id/material_search_bar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"-->
+<!--        app:mt_hint="Enter Email"-->
+<!--        app:mt_maxSuggestionsCount="50"/>-->
 
 
     <View
@@ -72,13 +72,37 @@
             android:layout_margin="20dp"
             android:text="Stop Tracking" />
 
+
+
+
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Detection History List"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/cardview_dark_background"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_all_history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recycler_all_people"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
 
