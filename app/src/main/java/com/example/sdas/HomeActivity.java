@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -34,10 +35,14 @@ import com.example.sdas.ViewHolder.HistoryAdapter;
 //import com.example.sdas.ViewHolder.UserViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +163,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         Paper.init(this);
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and toast
+                        Log.d(TAG, token);
+                        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
     public void onClick(View v) {
@@ -214,6 +237,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStop();
         adapter.stopListening();
+    }
+
+
+
+    /**
+     * method to handle the data content on clicking of notification if both notification and data payload are sent
+     */
+    private void handleNotificationData() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            if (bundle.containsKey("data1")) {
+                Log.d(TAG, "Data1 : " + bundle.getString("data1"));
+            }
+            if (bundle.containsKey("data2")) {
+                Log.d(TAG, "Data2 : " + bundle.getString("data2"));
+            }
+
+        }
     }
 
 }

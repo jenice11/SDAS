@@ -64,6 +64,18 @@
             <!--            </intent-filter>-->
         </service>
 
+        <!-- declare firebase messaging service -->
+        <service
+            android:name=".Utils.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <!-- action to listen token changes -->
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                <!-- action to listen incoming push notification -->
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
 
         <activity
             android:name=".HomeActivity"

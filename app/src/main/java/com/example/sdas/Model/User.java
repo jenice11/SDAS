@@ -4,7 +4,12 @@ import java.util.HashMap;
 
 public class User {
 
-    private String uid,email;
+    private String uid;
+    private String email;
+
+
+
+    private String name;
     private HashMap<String,User> acceptList;
 
     private String trackStatus;
@@ -12,11 +17,12 @@ public class User {
     public User(){
     }
 
-    public User(String uid, String email) {
+    public User(String uid, String email, String name) {
         this.uid = uid;
         this.email = email;
+        this.name = name;
 
-        this.acceptList = new HashMap<>();
+//        this.acceptList = new HashMap<>();
     }
 
 
@@ -26,6 +32,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public HashMap<String, User> getAcceptList() {
@@ -38,6 +48,11 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setAcceptList(HashMap<String, User> acceptList) {

@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                                 {
                                     if(!dataSnapshot.child(firebaseUser.getUid()).exists())
                                     {
-                                        Common.loggedUser = new User(firebaseUser.getUid(),firebaseUser.getEmail());
+                                        Common.loggedUser = new User(firebaseUser.getUid(),firebaseUser.getEmail(),firebaseUser.getDisplayName());
 
                                         user_information.child(Common.loggedUser.getUid())
                                                 .setValue(Common.loggedUser);
