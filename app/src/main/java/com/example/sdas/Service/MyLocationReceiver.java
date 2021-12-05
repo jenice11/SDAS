@@ -21,6 +21,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.sdas.HomeActivity;
 import com.example.sdas.Model.History;
@@ -319,6 +320,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
         return results[0];
     }
+
+
 }
 
 

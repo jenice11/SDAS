@@ -4,9 +4,13 @@ import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,10 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,11 +44,16 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -117,8 +129,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 new LinearLayoutManager(this));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
-        Log.d(TAG, "<< Before launch recycle view >>");
 
         // It is a class provide by the FirebaseUI to make a
         // query in the database to fetch appropriate data
@@ -237,24 +247,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStop();
         adapter.stopListening();
-    }
-
-
-
-    /**
-     * method to handle the data content on clicking of notification if both notification and data payload are sent
-     */
-    private void handleNotificationData() {
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if (bundle.containsKey("data1")) {
-                Log.d(TAG, "Data1 : " + bundle.getString("data1"));
-            }
-            if (bundle.containsKey("data2")) {
-                Log.d(TAG, "Data2 : " + bundle.getString("data2"));
-            }
-
-        }
     }
 
 }

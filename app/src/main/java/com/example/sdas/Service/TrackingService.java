@@ -13,6 +13,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -20,9 +21,12 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.sdas.R;
 import com.example.sdas.Utils.Common;
@@ -30,6 +34,9 @@ import com.example.sdas.Utils.NotificationHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.RemoteMessage;
@@ -44,6 +51,8 @@ public class TrackingService extends Service {
     private static final String CHANNEL_ID = "channel_01";
     private NotificationManager mNotificationManager;
     Double latitude, longitude;
+    DatabaseReference user_history;
+
 
     DatabaseReference publicLocation;
     String uid;
@@ -79,6 +88,36 @@ public class TrackingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId){
         // do your jobs here
         updateLocation();
+
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+
+        user_history.limitToLast(1).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                notification();
+                Log.w(TAG, ">>>>>>>>>new history added");
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         return START_STICKY;
@@ -157,39 +196,61 @@ public class TrackingService extends Service {
         return false;
     }
 
-    private void sendNotification(RemoteMessage remoteMessage) {
-        Map<String,String> data = remoteMessage.getData();
-        String title = "Friend Requests";
-        String content = "New Friend request from "+data.get(Common.FROM_NAME);
+//    private void sendNotification(RemoteMessage remoteMessage) {
+//        Map<String,String> data = remoteMessage.getData();
+//        String title = "Friend Requests";
+//        String content = "New Friend request from "+data.get(Common.FROM_NAME);
+//
+//        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+//                .setSmallIcon(R.mipmap.ic_launcher_round)
+//                .setContentTitle(title)
+//                .setContentText(content)
+//                .setSound(defaultSound)
+//                .setAutoCancel(false);
+//        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+//        manager.notify(new Random().nextInt(),builder.build());
+//
+//    }
+//
+//
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    private void sendNotificationWithChannel(RemoteMessage remoteMessage) {
+//        Map<String,String> data = remoteMessage.getData();
+//        String title = "Friend Requests";
+//        String content = "New Friend request from "+data.get(Common.FROM_NAME);
+//
+//        NotificationHelper helper;
+//        Notification.Builder builder;
+//
+//        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        helper = new NotificationHelper(this);
+//        builder = helper.getRealTrackingNotification(title,content,defaultSound);
+//
+//        helper.getManager().notify(new Random().nextInt(),builder.build());
+//    }
 
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    private void notification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel("channel_id", "Test Notification Channel",
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setDescription("My test notification channel");
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setSound(defaultSound)
-                .setAutoCancel(false);
-        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(new Random().nextInt(),builder.build());
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
 
-    }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
+                .setContentTitle("Nearby device detected")
+                .setContentText("Please perform social distancing")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setAutoCancel(true);
 
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.notify(999, builder.build());
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void sendNotificationWithChannel(RemoteMessage remoteMessage) {
-        Map<String,String> data = remoteMessage.getData();
-        String title = "Friend Requests";
-        String content = "New Friend request from "+data.get(Common.FROM_NAME);
-
-        NotificationHelper helper;
-        Notification.Builder builder;
-
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        helper = new NotificationHelper(this);
-        builder = helper.getRealTrackingNotification(title,content,defaultSound);
-
-        helper.getManager().notify(new Random().nextInt(),builder.build());
     }
 
 }

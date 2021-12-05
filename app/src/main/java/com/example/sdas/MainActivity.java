@@ -43,15 +43,22 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference user_information;
     private static final int MY_REQUEST_CODE = 7117;
     List<AuthUI.IdpConfig> providers;
+    static boolean calledAlready = false;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Paper.init(this);
+        /* Enable disk persistence  */
+        if (!calledAlready)
+        {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            calledAlready = true;
+        }
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        Paper.init(this);
 
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
         user_information.keepSynced(true);
