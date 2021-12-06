@@ -52,11 +52,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 //        /* Enable disk persistence */
-        if (!calledAlready)
-        {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            calledAlready = true;
-        }
+//        if (!calledAlready)
+//        {
+//            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+//            calledAlready = true;
+//        }
 
         Paper.init(this);
 

@@ -128,13 +128,12 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        trackingUserLocation.removeEventListener(this);
                     }
                 });
     }
 
     private void insertHistory(final List<MyLocation> locationList) {
-
         trackingUserLocation.child(Common.loggedUser.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -222,7 +221,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        trackingUserLocation.removeEventListener(this);
                     }
                 });
     }
