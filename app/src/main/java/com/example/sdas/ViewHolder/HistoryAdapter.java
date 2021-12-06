@@ -34,7 +34,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
     onBindViewHolder(@NonNull HistoryViewholder holder,
                      int position, @NonNull History model)
     {
-        Log.d(TAG, "<< Setting data to viewholder >>");
+//        Log.d(TAG, "<< Setting data to viewholder >>");
 
         // Add *variables* from model class (here
         // "History.class")to appropriate view in Card
@@ -86,7 +86,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
             time = itemView.findViewById(R.id.tvTime);
             distance = itemView.findViewById(R.id.tvDistance);
             risk = itemView.findViewById(R.id.tvRisk);
-            Log.d(TAG, "<< Setting data to itemview >>");
+//            Log.d(TAG, "<< Setting data to itemview >>");
 
         }
     }

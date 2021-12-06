@@ -3,6 +3,7 @@ package com.example.sdas;
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -56,6 +57,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +75,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //history
     private RecyclerView recyclerView;
     HistoryAdapter adapter;
-    DatabaseReference user_history;
+    DatabaseReference user_history, publicLocation;
+    private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count;
+    int countHigh = 0, countMedium = 0, countLow = 0;
 
 
     TextView name, email, empid;
@@ -101,6 +107,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //declaration
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mTrackButton = findViewById(R.id.trackButton);
@@ -119,6 +126,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         email = (TextView) navView.findViewById(R.id.email);
         empid = (TextView) navView.findViewById(R.id.empid);
         navprofile = (ImageView) navView.findViewById(R.id.navprofile);
+
+        home_risk_high_count = findViewById(R.id.home_risk_high_count);
+        home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
+        home_risk_low_count = findViewById(R.id.home_risk_low_count);
+
+        getDataforSummaryHistory();
+
 
         // Create a instance of the database and get
         // its reference
@@ -214,7 +228,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(R.id.stopButton == v.getId()){
-            DatabaseReference publicLocation;
             publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
             publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
 
@@ -228,7 +241,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        DatabaseReference publicLocation;
+
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
         Log.d(TAG, "App Destroyed + firebase status false");
@@ -247,6 +260,53 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStop();
         adapter.stopListening();
+    }
+
+    private void getDataforSummaryHistory() {
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+
+        // Attach a listener to read the data at your profile reference
+        user_history.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                    String key =  child.getKey();
+
+//                    Log.d("User key", child.getKey());
+//                    Log.d("User ref", child.getRef().toString());
+//                    Log.d("User val", child.getValue().toString());
+
+                    History history = dataSnapshot.child(key).getValue(History.class);
+                    String risk = history.getRisk();
+//                    Log.e("Get Data", risk);
+
+                    if(risk.equals("High")){
+                        countHigh++;
+//                        Log.e("Count===", String.valueOf(countHigh));
+                    }
+                    else if(risk.equals("Medium")){
+                        countMedium++;
+                    }
+                    else if(risk.equals("Low")){
+                        countLow++;
+                    }
+
+                }
+
+//                Log.e("countHig2h===", String.valueOf(countHigh));
+//                Log.e("countMedium2===", String.valueOf(countMedium));
+//                Log.e("countLow2===", String.valueOf(countLow));
+                home_risk_high_count.setText(String.format("%d",countHigh));
+                home_risk_medium_count.setText(String.format("%d",countMedium));
+                home_risk_low_count.setText(String.format("%d",countLow));
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
     }
 
 }
