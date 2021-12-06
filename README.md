@@ -9,12 +9,13 @@ Function calculate distance\
 Track Status\
 History data and class insert in firebase\
 Recycle adapter for history device list\
-Logic for distance less than 1.5m (have not tested for multiple coordinates)\
-Timer for detecting location (not working for background)\
-*Notification when new device detected history is added in firebase
+Notification when new device detected history is added in firebase\
+*Fixed Logic for distance less than 1.5m (tested for multiple coordinates)\
+*Summary for detection history for user based on risk (Risk count)
 
 *Issue\
 Data insert for history (currently duplicate twice)\
-Alarm when resume from background to foreground is not working
+Alarm when resume from background to foreground is not working (removed for now)\
+Stop service, the receiver didnt stop
 
 

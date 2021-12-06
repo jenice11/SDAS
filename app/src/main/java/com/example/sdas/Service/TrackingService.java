@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,6 +29,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.sdas.HomeActivity;
 import com.example.sdas.R;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.Utils.NotificationHelper;
@@ -169,6 +171,16 @@ public class TrackingService extends Service {
         DatabaseReference publicLocation;
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+
+        Intent intent = new Intent(this, HomeActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1253, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+
+        stopService(new Intent(this, TrackingService.class));
+
+
+
         Log.d(TAG, "Stopped tracking log + firebase status false");
     }
 
@@ -195,6 +207,7 @@ public class TrackingService extends Service {
 
         return false;
     }
+
 
 //    private void sendNotification(RemoteMessage remoteMessage) {
 //        Map<String,String> data = remoteMessage.getData();
@@ -252,5 +265,7 @@ public class TrackingService extends Service {
         managerCompat.notify(999, builder.build());
 
     }
+
+
 
 }

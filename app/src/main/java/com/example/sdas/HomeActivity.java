@@ -8,6 +8,7 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -37,6 +38,7 @@ import com.example.sdas.Interface.IFirebaseLoadDone;
 import com.example.sdas.Model.History;
 import com.example.sdas.Model.MyLocation;
 import com.example.sdas.Model.User;
+import com.example.sdas.Service.MyLocationReceiver;
 import com.example.sdas.Service.TrackingService;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.ViewHolder.HistoryAdapter;
@@ -88,6 +90,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private static final int MY_REQUEST_CODE = 7117;
+    private final BroadcastReceiver mReceiver = new MyLocationReceiver();
+
 
     /////////////
 
@@ -201,7 +205,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                         // Log and toast
                         Log.d(TAG, token);
-                        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -213,13 +217,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //                startForegroundService(new Intent(this, TrackingService.class));
 //                Toast.makeText(this, "Start tracking now Fore", Toast.LENGTH_SHORT).show();
 //            } else {
-            Intent ishintent = new Intent(this, TrackingService.class);
-            PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
-            AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            alarm.cancel(pintent);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
 
-//                startService(new Intent(this, TrackingService.class));
+
+//            Intent ishintent = new Intent(this, TrackingService.class);
+//            PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
+//            AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+//            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
+
+                startService(new Intent(this, TrackingService.class));
                 Toast.makeText(this, "Start tracking now Intent", Toast.LENGTH_SHORT).show();
 //            }
 
@@ -231,9 +236,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
             publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
 
+            Intent intent = new Intent(this, HomeActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1253, intent, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.cancel(pendingIntent);
+
             stopService(new Intent(this, TrackingService.class));
 
+
+
             Toast.makeText(this, "Tracking stopped", Toast.LENGTH_SHORT).show();
+
+
+
+
         }
 
     }
@@ -241,6 +257,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopService(new Intent(this, TrackingService.class));
+
+        Intent intent = new Intent(this, HomeActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1253, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
 
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
@@ -306,6 +328,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+
+    }
+
+    public void onPause() {
+        super.onPause();
+        stopService(new Intent(this, TrackingService.class));
+
 
     }
 
