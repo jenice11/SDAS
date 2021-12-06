@@ -98,6 +98,7 @@ public class TrackingService extends Service {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 notification();
                 Log.w(TAG, ">>>>>>>>>new history added");
+
             }
 
             @Override
@@ -117,7 +118,7 @@ public class TrackingService extends Service {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                user_history.removeEventListener(this);
             }
         });
 

@@ -63,6 +63,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.paperdb.Paper;
@@ -80,6 +81,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference user_history, publicLocation;
     private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count;
     int countHigh = 0, countMedium = 0, countLow = 0;
+    List<String> list = new ArrayList<>();
+
 
 
     TextView name, email, empid;
@@ -182,7 +185,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //                        startActivity(intent1);
 //                        break;
                     case R.id.nav_sign_out:
-
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(HomeActivity.this, MainActivity.class));
                         break;
                 }
                 return false;
@@ -288,44 +292,99 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
         // Attach a listener to read the data at your profile reference
-        user_history.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child: dataSnapshot.getChildren()) {
-                    String key =  child.getKey();
-
+//        user_history.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot child: dataSnapshot.getChildren()) {
+//                    String key =  child.getKey();
+//
 //                    Log.d("User key", child.getKey());
 //                    Log.d("User ref", child.getRef().toString());
-//                    Log.d("User val", child.getValue().toString());
+////                    Log.d("User val", child.getValue().toString());
+//
+//                    History history = dataSnapshot.child(key).getValue(History.class);
+//                    String risk = history.getRisk();
+////                    Log.e("Get Data", risk);
+//
+//                    if(risk.equals("High")){
+//                        countHigh++;
+////                        Log.e("Count===", String.valueOf(countHigh));
+//                    }
+//                    else if(risk.equals("Medium")){
+//                        countMedium++;
+//                    }
+//                    else if(risk.equals("Low")){
+//                        countLow++;
+//                    }
+//
+//                }
+//
+////                Log.e("countHig2h===", String.valueOf(countHigh));
+////                Log.e("countMedium2===", String.valueOf(countMedium));
+////                Log.e("countLow2===", String.valueOf(countLow));
+//                home_risk_high_count.setText(String.format("%d",countHigh));
+//                home_risk_medium_count.setText(String.format("%d",countMedium));
+//                home_risk_low_count.setText(String.format("%d",countLow));
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                System.out.println("The read failed: " + databaseError.getCode());
+//            }
+//        });
 
-                    History history = dataSnapshot.child(key).getValue(History.class);
-                    String risk = history.getRisk();
-//                    Log.e("Get Data", risk);
+        user_history.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                    if(risk.equals("High")){
-                        countHigh++;
-//                        Log.e("Count===", String.valueOf(countHigh));
-                    }
-                    else if(risk.equals("Medium")){
-                        countMedium++;
-                    }
-                    else if(risk.equals("Low")){
-                        countLow++;
-                    }
+                System.out.println("COUNT Key: " + snapshot.getKey());
+                System.out.println("COUNT CHILDREN: " + snapshot.getChildrenCount());
 
+                History history = snapshot.getValue(History.class);
+                String risk = history.getRisk();
+                System.out.println("COUNT risk: " + risk);
+
+                for (DataSnapshot snap : snapshot.getChildren())
+                {
+                    if(snap.getKey().equals("risk"))
+                    {
+                        //If you want the node value
+                        list.add(snap.getValue().toString());
+                        System.out.println("COUNT getValue: " + snap.getValue().toString());
+
+                        //If you want the key value
+//                        list.add(snap.getKey());
+//                        System.out.println("COUNT getKey: " + snap.getKey());
+                    }
                 }
+                System.out.println("COUNT list: " + list);
 
-//                Log.e("countHig2h===", String.valueOf(countHigh));
-//                Log.e("countMedium2===", String.valueOf(countMedium));
-//                Log.e("countLow2===", String.valueOf(countLow));
+                int countHigh = Collections.frequency(list, "High");
+                int countMedium = Collections.frequency(list, "Medium");
+                int countLow = Collections.frequency(list, "Low");
                 home_risk_high_count.setText(String.format("%d",countHigh));
                 home_risk_medium_count.setText(String.format("%d",countMedium));
                 home_risk_low_count.setText(String.format("%d",countLow));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
