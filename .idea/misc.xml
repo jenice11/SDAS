@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_all_people.xml" value="0.24547101449275363" />
+        <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_covid_stat.xml" value="0.12360688956433637" />
         <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_friend_request.xml" value="0.24547101449275363" />
         <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_home.xml" value="0.176" />
         <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/layout/adapter_history.xml" value="0.24547101449275363" />
         <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/layout/layout_friend_request.xml" value="0.24547101449275363" />
+        <entry key="..\:/AndroidStudioProjects/SDAS/app/src/main/res/menu/drawermenu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/CovidTracker/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2455" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/CovidTracker/app/src/main/res/drawable/ic_account_circle_black_24dp.xml" value="0.2455" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/CovidTracker/app/src/main/res/drawable/ic_check_black_24dp.xml" value="0.2455" />

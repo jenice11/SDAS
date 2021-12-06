@@ -184,6 +184,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //                        Intent intent1 = new Intent(HomeActivity.this, FriendRequestActivity.class);
 //                        startActivity(intent1);
 //                        break;
+                    case R.id.nav_covid_stat:
+                    startActivity(new Intent(getApplicationContext(),StatActivity.class));
+                        break;
+
                     case R.id.nav_sign_out:
                         FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(HomeActivity.this, MainActivity.class));

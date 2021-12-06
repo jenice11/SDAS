@@ -10,8 +10,9 @@ Track Status\
 History data and class insert in firebase\
 Recycle adapter for history device list\
 Notification when new device detected history is added in firebase\
-*Fixed Logic for distance less than 1.5m (tested for multiple coordinates)\
-*Summary for detection history for user based on risk (Risk count)
+Fixed Logic for distance less than 1.5m (tested for multiple coordinates)\
+Summary for detection history for user based on risk (Risk count)\
+*Covid Global Statistics page
 
 *Issue\
 Data insert for history (currently duplicate twice)\
