@@ -12,6 +12,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+
+
 
     <application
         android:allowBackup="true"
@@ -39,14 +43,6 @@
             android:name=".TrackingActivity"
             android:label="@string/title_activity_tracking" />
 
-        <service
-            android:name=".Service.MyFCMService"
-            android:enabled="true"
-            android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
-<!--            </intent-filter>-->
-        </service> <!-- <receiver android:name=".Service.MyLocationReceiver" /> -->
         <receiver
             android:name=".Service.MyLocationReceiver"
             android:exported="true">
@@ -92,6 +88,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".StatActivity" />
+
+
     </application>
 
 </manifest>

@@ -30,6 +30,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.sdas.HomeActivity;
+import com.example.sdas.Model.History;
+import com.example.sdas.Model.MyLocation;
 import com.example.sdas.R;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.Utils.NotificationHelper;
@@ -41,8 +43,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -53,12 +61,21 @@ public class TrackingService extends Service {
     private static final String CHANNEL_ID = "channel_01";
     private NotificationManager mNotificationManager;
     Double latitude, longitude;
+
+
+    DatabaseReference trackingUserLocation;
+    String key;
+    List<MyLocation> locationList = new ArrayList<>();
+    Double distance;
+    DatabaseReference history = FirebaseDatabase.getInstance().getReference(Common.HISTORY);
+
+
+
     DatabaseReference user_history;
 
 
     DatabaseReference publicLocation;
     String uid;
-    BroadcastReceiver mReceiver;
 
     public TrackingService() {
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
@@ -70,27 +87,10 @@ public class TrackingService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-
-
-    public void onCreate() {
-//        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        // Android O requires a Notification Channel.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            CharSequence name = getString(R.string.app_name);
-//            // Create the channel for the notification
-//            NotificationChannel mChannel =
-//                    new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
-//
-//            // Set the Notification Channel for the Notification Manager.
-//            mNotificationManager.createNotificationChannel(mChannel);
-//        }
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         // do your jobs here
         updateLocation();
-
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
         user_history.limitToLast(1).addChildEventListener(new ChildEventListener() {
@@ -122,9 +122,11 @@ public class TrackingService extends Service {
             }
         });
 
+//        System.out.println("How many times it fking loop bitch");
 
-        return START_STICKY;
-//        return super.onStartCommand(intent, flags, startId);
+
+//        return START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void buildLocationRequest() {
@@ -139,6 +141,7 @@ public class TrackingService extends Service {
         buildLocationRequest();
         Log.d(TAG, "AT update location tracking service");
 
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -150,64 +153,41 @@ public class TrackingService extends Service {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-
-
-        // Update notification content if running as a foreground service.
-        if (serviceIsRunningInForeground(this)) {
-
-            updateLocation();
-        }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
+
     }
+
 
 
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(this, MyLocationReceiver.class);
         intent.setAction(MyLocationReceiver.ACTION);
-        return PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        return PendingIntent.getBroadcast(this,111,intent,PendingIntent.FLAG_ONE_SHOT);
     }
 
-    @Override
-    public void onDestroy() {
-        DatabaseReference publicLocation;
-        publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-        publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
-
-        Intent intent = new Intent(this, HomeActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1253, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
-
-        stopService(new Intent(this, TrackingService.class));
 
 
-
-        Log.d(TAG, "Stopped tracking log + firebase status false");
-    }
-
-    private void onNewLocation(Location location) {
-
-    }
-
-    /**
-     * Returns true if this is a foreground service.
-     *
-     * @param context The {@link Context}.
-     */
-    public boolean serviceIsRunningInForeground(Context context) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(
-                Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
-                Integer.MAX_VALUE)) {
-            if (getClass().getName().equals(service.service.getClassName())) {
-                if (service.foreground) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
+//    /**
+//     * Returns true if this is a foreground service.
+//     *
+//     * @param context The {@link Context}.
+//     */
+//    public boolean serviceIsRunningInForeground(Context context) {
+//        ActivityManager manager = (ActivityManager) context.getSystemService(
+//                Context.ACTIVITY_SERVICE);
+//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+//                Integer.MAX_VALUE)) {
+//            if (getClass().getName().equals(service.service.getClassName())) {
+//                if (service.foreground) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
 
 
 //    private void sendNotification(RemoteMessage remoteMessage) {
@@ -266,6 +246,8 @@ public class TrackingService extends Service {
         managerCompat.notify(999, builder.build());
 
     }
+
+
 
 
 

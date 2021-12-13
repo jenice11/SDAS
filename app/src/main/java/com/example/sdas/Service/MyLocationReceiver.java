@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,14 +32,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.security.auth.callback.Callback;
-
 import io.paperdb.Paper;
 
 public class MyLocationReceiver extends BroadcastReceiver {
     public static final String ACTION = "com.example.sdas.UPDATE_LOCATION";
 
-    DatabaseReference publicLocation;
     String uid;
     DatabaseReference trackingUserLocation;
     List<MyLocation> locationList = new ArrayList<>();
@@ -48,18 +46,21 @@ public class MyLocationReceiver extends BroadcastReceiver {
     public double LogLatA = 0, LogLonA=0, LogLatB = 0, LogLonB=0;
     public String LogDate = null, LogTime=null;
     Map<String, Object> historyMapLog = new HashMap<String, Object>();
+    DatabaseReference publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
 
 
-
-    public MyLocationReceiver() {
-        publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         Paper.init(context);
         uid = Paper.book().read(Common.USER_UID_SAVE_KEY);
 
+
+
+
+//        Intent background = new Intent(context, TrackingService.class);
+//        context.startService(background);
 
         if(intent != null)
         {
@@ -83,21 +84,26 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         publicLocation.child(uid).setValue(location);
                     }
                     Log.d(TAG, "New update "+location);
+                    getDistance();
+
+
                 }
 
-                getDistance();
+
+
 
             }
 
         }
+
     }
 
 
+    //start comment
     public void getDistance(){
+        System.out.println("How many times it fking loop bitch");
+
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-
-
-
 //        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         trackingUserLocation.orderByKey()
                 //.equalTo(firebaseUser.getUid())
@@ -122,6 +128,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                             }
 //                            Log.d("LIST", String.valueOf(locationList));
                             insertHistory(locationList);
+
 
                         }
                     }
@@ -232,29 +239,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
         return results[0];
     }
-
-//    public interface OnCompleteCallback{
-//        void onComplete(boolean success);
-//    }
-//
-//    public void checkDuplicate(final OnCompleteCallback callback) {
-//        final Query query = history.child(Common.loggedUser.getUid());
-//
-//        query.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                MyLocation location = postSnapshot.getValue(MyLocation.class);
-//
-//                locationList.add(location);
-//                String userName = dataSnapshot.child("userName").getValue(String.class);
-//                callback.onComplete(userName);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-//    }
 
 
 

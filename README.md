@@ -12,11 +12,10 @@ Recycle adapter for history device list\
 Notification when new device detected history is added in firebase\
 Fixed Logic for distance less than 1.5m (tested for multiple coordinates)\
 Summary for detection history for user based on risk (Risk count)\
-*Covid Global Statistics page
+Covid Global Statistics page
 
 *Issue\
-Data insert for history (currently duplicate twice)\
-Alarm when resume from background to foreground is not working (removed for now)\
+Alarm when resume from background to foreground is not working \
 Stop service, the receiver didnt stop
 
 

@@ -3,16 +3,10 @@ package com.example.sdas;
 import static android.content.ContentValues.TAG;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,8 +22,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,18 +29,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sdas.Interface.IFirebaseLoadDone;
 import com.example.sdas.Model.History;
 import com.example.sdas.Model.MyLocation;
-import com.example.sdas.Model.User;
-import com.example.sdas.Service.MyLocationReceiver;
 import com.example.sdas.Service.TrackingService;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.ViewHolder.HistoryAdapter;
 //import com.example.sdas.ViewHolder.UserViewHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -56,11 +41,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,7 +73,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private static final int MY_REQUEST_CODE = 7117;
-    private final BroadcastReceiver mReceiver = new MyLocationReceiver();
 
 
     /////////////
@@ -199,23 +178,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         Paper.init(this);
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        // Log and toast
-                        Log.d(TAG, token);
-//                        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
-                    }
-                });
+//        FirebaseMessaging.getInstance().getToken()
+//                .addOnCompleteListener(new OnCompleteListener<String>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<String> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+//                            return;
+//                        }
+//
+//                        // Get new FCM registration token
+//                        String token = task.getResult();
+//
+//                        // Log and toast
+//                        Log.d(TAG, token);
+////                        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
     }
 
@@ -226,15 +205,27 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //                Toast.makeText(this, "Start tracking now Fore", Toast.LENGTH_SHORT).show();
 //            } else {
 
-
-//            Intent ishintent = new Intent(this, TrackingService.class);
-//            PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
-//            AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-//            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
-
-                startService(new Intent(this, TrackingService.class));
-                Toast.makeText(this, "Start tracking now Intent", Toast.LENGTH_SHORT).show();
+//            Intent alarm = new Intent(this, AlarmReceiver.class);
+//            boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
+//            if(alarmRunning == false){
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,alarm, 0);
+//                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//                alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 10000, pendingIntent);
 //            }
+
+
+
+//            Toast.makeText(this, "Pressed track button", Toast.LENGTH_SHORT).show();
+
+
+            Intent ishintent = new Intent(this, TrackingService.class);
+            PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
+            AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
+
+//            startService(new Intent(this, TrackingService.class));
+            Toast.makeText(this, "Start tracking now Intent", Toast.LENGTH_SHORT).show();
+
 
 //            startService(new Intent(this, TrackingService.class));
 //            Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
@@ -249,7 +240,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
 
-            stopService(new Intent(this, TrackingService.class));
+//            stopService(new Intent(this, TrackingService.class));
 
 
 
@@ -265,6 +256,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         stopService(new Intent(this, TrackingService.class));
 
         Intent intent = new Intent(this, HomeActivity.class);
@@ -394,11 +386,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void onPause() {
-        super.onPause();
-        stopService(new Intent(this, TrackingService.class));
 
 
-    }
 
 }
