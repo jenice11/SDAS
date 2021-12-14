@@ -16,4 +16,12 @@
     <color name="colorNavyBlue">#333E61</color>
     <color name="colorGray">#E7ECF2</color>
 
+    <color name="colorCases">#7A2CF0</color>
+    <color name="colorCasesToday">#A9492A</color>
+    <color name="colorRecovered">#43A047</color>
+    <color name="colorDeaths">#D60F0F</color>
+    <color name="colorDeathsToday">#9C2133</color>
+    <color name="colorActive">#0288D1</color>
+    <color name="colorCritical">#FFA000</color>
+
 </resources>

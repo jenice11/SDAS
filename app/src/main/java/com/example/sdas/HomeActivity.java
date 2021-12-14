@@ -5,8 +5,10 @@ import static android.content.ContentValues.TAG;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sdas.Interface.IFirebaseLoadDone;
 import com.example.sdas.Model.History;
 import com.example.sdas.Model.MyLocation;
+import com.example.sdas.Service.MyLocationReceiver;
 import com.example.sdas.Service.TrackingService;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.ViewHolder.HistoryAdapter;
@@ -146,6 +149,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
 
+
+
         ActivityCompat.requestPermissions(HomeActivity.this,
                 new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
                 1);
@@ -155,21 +160,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 switch (id) {
-//                    case R.id.nav_find_people:
-//                        Intent intent = new Intent(HomeActivity.this, AllPeopleActivity.class);
-//                        startActivity(intent);
-//                        break;
-//                    case R.id.nav_add_people:
-//                        Intent intent1 = new Intent(HomeActivity.this, FriendRequestActivity.class);
-//                        startActivity(intent1);
-//                        break;
+                    case R.id.nav_home:
+                        startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                        break;
+
                     case R.id.nav_covid_stat:
-                    startActivity(new Intent(getApplicationContext(),StatActivity.class));
+                    startActivity(new Intent(getApplicationContext(),StatsActivity.class));
                         break;
 
                     case R.id.nav_sign_out:
                         FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(HomeActivity.this, MainActivity.class));
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         break;
                 }
                 return false;
@@ -224,6 +225,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
 
 //            startService(new Intent(this, TrackingService.class));
+            startBroadCastReceiver();
             Toast.makeText(this, "Start tracking now Intent", Toast.LENGTH_SHORT).show();
 
 
@@ -240,15 +242,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
 
-//            stopService(new Intent(this, TrackingService.class));
 
+            stopService(new Intent(this, TrackingService.class));
+            killBroadCastReceiver();
 
 
             Toast.makeText(this, "Tracking stopped", Toast.LENGTH_SHORT).show();
-
-
-
-
         }
 
     }
@@ -274,6 +273,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStart();
         adapter.startListening();
+//        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
+        adapter.notifyDataSetChanged();
+
     }
 
     // Function to tell the app to stop getting
@@ -286,49 +288,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDataforSummaryHistory() {
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
-
-        // Attach a listener to read the data at your profile reference
-//        user_history.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot child: dataSnapshot.getChildren()) {
-//                    String key =  child.getKey();
-//
-//                    Log.d("User key", child.getKey());
-//                    Log.d("User ref", child.getRef().toString());
-////                    Log.d("User val", child.getValue().toString());
-//
-//                    History history = dataSnapshot.child(key).getValue(History.class);
-//                    String risk = history.getRisk();
-////                    Log.e("Get Data", risk);
-//
-//                    if(risk.equals("High")){
-//                        countHigh++;
-////                        Log.e("Count===", String.valueOf(countHigh));
-//                    }
-//                    else if(risk.equals("Medium")){
-//                        countMedium++;
-//                    }
-//                    else if(risk.equals("Low")){
-//                        countLow++;
-//                    }
-//
-//                }
-//
-////                Log.e("countHig2h===", String.valueOf(countHigh));
-////                Log.e("countMedium2===", String.valueOf(countMedium));
-////                Log.e("countLow2===", String.valueOf(countLow));
-//                home_risk_high_count.setText(String.format("%d",countHigh));
-//                home_risk_medium_count.setText(String.format("%d",countMedium));
-//                home_risk_low_count.setText(String.format("%d",countLow));
-//
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                System.out.println("The read failed: " + databaseError.getCode());
-//            }
-//        });
-
         user_history.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -384,6 +343,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    private void startBroadCastReceiver() {
+        PackageManager pm = this.getPackageManager();
+        ComponentName componentName = new ComponentName(this, MyLocationReceiver.class);
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+//        Toast.makeText(getApplicationContext(), "BroadCast Receiver Started", Toast.LENGTH_LONG).show();
+    }
+
+    private void killBroadCastReceiver() {
+        PackageManager pm = this.getPackageManager();
+        ComponentName componentName = new ComponentName(this, MyLocationReceiver.class);
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+//        Toast.makeText(getApplicationContext(), "BroadCast Receiver Killed", Toast.LENGTH_LONG).show();
     }
 
 
