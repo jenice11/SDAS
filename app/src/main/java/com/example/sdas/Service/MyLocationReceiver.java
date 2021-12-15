@@ -43,24 +43,13 @@ public class MyLocationReceiver extends BroadcastReceiver {
     Double distance;
     DatabaseReference history = FirebaseDatabase.getInstance().getReference(Common.HISTORY);
     String key;
-    public double LogLatA = 0, LogLonA=0, LogLatB = 0, LogLonB=0;
-    public String LogDate = null, LogTime=null;
-    Map<String, Object> historyMapLog = new HashMap<String, Object>();
     DatabaseReference publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         Paper.init(context);
         uid = Paper.book().read(Common.USER_UID_SAVE_KEY);
-
-
-
-
-//        Intent background = new Intent(context, TrackingService.class);
-//        context.startService(background);
 
         if(intent != null)
         {
@@ -85,23 +74,15 @@ public class MyLocationReceiver extends BroadcastReceiver {
                     }
                     Log.d(TAG, "New update "+location);
                     getDistance();
-
-
                 }
-
-
-
-
             }
-
         }
-
     }
 
 
     //start comment
     public void getDistance(){
-        System.out.println("How many times it fking loop bitch");
+//        System.out.println("How many times it fking loop bitch");
 
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
 //        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -117,19 +98,14 @@ public class MyLocationReceiver extends BroadcastReceiver {
 //                            Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
                             for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                                 key = postSnapshot.getKey();
-
 //                                userList.add(key);
                                 Log.d(TAG, "USER ID KEY: " + key);
 
                                 MyLocation location = postSnapshot.getValue(MyLocation.class);
-
                                 locationList.add(location);
-
                             }
 //                            Log.d("LIST", String.valueOf(locationList));
                             insertHistory(locationList);
-
-
                         }
                     }
 
@@ -157,7 +133,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                         double latitudeB=0, longitudeB=0, x = 0, y = 0;
 
-
                         if(locationList != null && locationList.size()!=0)
                         {
                             for(MyLocation location: locationList) {
@@ -167,7 +142,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                     if(latA == location.getLatitude() && longA ==location.getLongitude())
                                     {
                                         System.out.println("Coordinate A same user - lat  " + latA + "long "+ longA);
-
                                     }
                                     else{
                                         latitudeB = Double.valueOf(location.getLatitude());
@@ -212,19 +186,14 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                             listhistory.setValue(history);
                                         }
-
                                     }
-
-
                                 }
                                 else
                                 {
                                     Log.d(TAG, "<< Not Tracked Status >>");
                                 }
-
                             }
                         }
-
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -239,9 +208,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
         return results[0];
     }
-
-
-
 }
 
 

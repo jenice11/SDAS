@@ -51,7 +51,6 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
-
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     DrawerLayout mDrawerLayout;
@@ -66,30 +65,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     int countHigh = 0, countMedium = 0, countLow = 0;
     List<String> list = new ArrayList<>();
 
-
-
     TextView name, email, empid;
     ImageView navprofile;
     Toolbar toolbar;
     private Button mTrackButton,mStopButton;
-    Double distance;
-    DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    private static final int MY_REQUEST_CODE = 7117;
-
-
-    /////////////
-
-//    FirebaseRecyclerAdapter<User, UserViewHolder> adapter, searchAdapter;
-    RecyclerView recycler_friend_list;
-    IFirebaseLoadDone firebaseLoadDone;
-    DatabaseReference user_information;
-    DatabaseReference trackingUserLocation;
-    List<MyLocation> locationList = new ArrayList<>();
-    List<String> userList = new ArrayList<>();
-
-
-//    MaterialSearchBar searchBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
