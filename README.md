@@ -16,6 +16,4 @@ Covid Global Statistics page
 
 *Issue\
 Alarm when resume from background to foreground is not working \
-Stop service, the receiver didnt stop
-
 
