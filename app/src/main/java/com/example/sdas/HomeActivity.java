@@ -28,9 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.sdas.Interface.IFirebaseLoadDone;
 import com.example.sdas.Model.History;
-import com.example.sdas.Model.MyLocation;
 import com.example.sdas.Service.MyLocationReceiver;
 import com.example.sdas.Service.TrackingService;
 import com.example.sdas.Utils.Common;
@@ -69,11 +67,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ImageView navprofile;
     Toolbar toolbar;
     private Button mTrackButton,mStopButton;
+    DatabaseReference user_information;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
+        user_information.keepSynced(true);
 
         //declaration
         toolbar = findViewById(R.id.toolbar);
@@ -98,6 +101,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         home_risk_high_count = findViewById(R.id.home_risk_high_count);
         home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
         home_risk_low_count = findViewById(R.id.home_risk_low_count);
+
 
         getDataforSummaryHistory();
 
@@ -149,7 +153,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     case R.id.nav_sign_out:
                         FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                         break;
                 }
                 return false;

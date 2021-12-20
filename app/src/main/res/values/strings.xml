@@ -39,4 +39,10 @@
     <string name="risk_low">Low Risk</string>
 
 
+    <string name="signed_in_fmt">Signed in as: %s</string>
+    <string name="signed_in">Signed in</string>
+    <string name="signing_in">Signing in…</string>
+    <string name="signed_out">Signed out</string>
+
+
 </resources>

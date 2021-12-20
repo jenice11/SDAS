@@ -15,6 +15,7 @@ import com.example.sdas.Model.User;
 import com.example.sdas.Utils.Common;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -173,4 +174,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 }
