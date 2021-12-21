@@ -2,6 +2,7 @@ package com.example.sdas;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -15,12 +16,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.sdas.Model.User;
+import com.example.sdas.Utils.Common;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -47,7 +54,7 @@ public class SignupActivity extends AppCompatActivity {
 
         textview = (TextView) findViewById(R.id.textView4);
         btnResetPassword = (TextView) findViewById(R.id.btn_reset_password);
-        skip = (TextView) findViewById(R.id.skip);
+//        skip = (TextView) findViewById(R.id.skip);
         signin = (TextView) findViewById(R.id.sign_in_button);
         btnSignUp = (Button) findViewById(R.id.sign_up_button);
         inputName = (EditText) findViewById(R.id.name);
@@ -70,14 +77,14 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SignupActivity.this, HomeActivity.class));
-                mEditor.putString("Hello", "False");
-                mEditor.commit();
-            }
-        });
+//        skip.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(SignupActivity.this, HomeActivity.class));
+//                mEditor.putString("Hello", "False");
+//                mEditor.commit();
+//            }
+//        });
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +123,7 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         progressBar.setVisibility(View.VISIBLE);
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //create user
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
@@ -129,13 +137,12 @@ public class SignupActivity extends AppCompatActivity {
                         } else {
 
                             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            User user = new User(uid, name, email);
-                            mDatabase.child("users").child(uid).setValue(user);
+                            User user = new User(uid, email, name);
+                            mDatabase.child(Common.USER_INFORMATION).child(uid).setValue(user);
+                            updateToken(firebaseUser);
 
                             startActivity(new Intent(SignupActivity.this, LoginActivity.class));
-                            mEditor.putString("Hello", "True");
-                            mEditor.commit();
-                            finish();
+
                         }
                     }
                 });
@@ -146,5 +153,29 @@ public class SignupActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         progressBar.setVisibility(View.GONE);
+    }
+
+    private void updateToken(final FirebaseUser firebaseUser) {
+        final DatabaseReference tokens = FirebaseDatabase.getInstance()
+                .getReference(Common.TOKENS);
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        tokens.child(firebaseUser.getUid())
+                                .setValue(instanceIdResult.getToken());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Toast toast = Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT);
+                View view =toast.getView();
+                view.setBackgroundColor(Color.GREEN); //any color your want
+                toast.show();
+            }
+        });
+
     }
 }

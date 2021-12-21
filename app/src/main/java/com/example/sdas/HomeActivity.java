@@ -275,8 +275,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                System.out.println("COUNT Key: " + snapshot.getKey());
-                System.out.println("COUNT CHILDREN: " + snapshot.getChildrenCount());
+//                System.out.println("COUNT Key: " + snapshot.getKey());
+//                System.out.println("COUNT CHILDREN: " + snapshot.getChildrenCount());
 
                 History history = snapshot.getValue(History.class);
                 String risk = history.getRisk();

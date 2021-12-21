@@ -44,12 +44,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.RemoteMessage;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -77,12 +80,34 @@ public class TrackingService extends Service {
         updateLocation();
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
-        user_history.addChildEventListener(new ChildEventListener() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        String date = sdf.format(Calendar.getInstance().getTime());
+
+        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        String time = stf.format(Calendar.getInstance().getTime());
+
+        Date currentDT = Calendar.getInstance().getTime();
+
+
+
+        System.out.println("Current time = " + currentDT);
+
+
+        //under construction
+        user_history.orderByChild("datetime").startAt(String.valueOf(currentDT))
+//        user_history.orderByChild("timestamp").startAt(String.valueOf(ServerValue.TIMESTAMP))
+                .addChildEventListener(new ChildEventListener() {
+//        user_history.addChildEventListener(new ChildEventListener() {
             //        user_history.limitToLast(1).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 notification();
+
                 Log.w(TAG, ">>>>>>>>>new history added");
+
+                System.out.println("Firebase timestamp = " + snapshot.getValue(History.class).getTimestampLong());
+
+
             }
 
             @Override

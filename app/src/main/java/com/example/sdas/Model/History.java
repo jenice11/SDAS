@@ -1,11 +1,28 @@
 package com.example.sdas.Model;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
+import java.util.Date;
+import java.util.Map;
+
 public class History {
     private String date;
     private String risk;
     private String time;
     private double distance;
     private double latitudeA, latitudeB, longitudeA,longitudeB;
+    private Long timestamp;
+
+    public Date getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
+    }
+
+    private Date datetime;
 
     public History() {
     }
@@ -73,4 +90,18 @@ public class History {
     public void setLongitudeB(double longitudeB) {
         this.longitudeB = longitudeB;
     }
+
+    public java.util.Map<String, String> getTimestamp() {
+        return ServerValue.TIMESTAMP;
+    }
+
+    @Exclude
+    public Long getTimestampLong() {
+        return timestamp;
+    }
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+
 }

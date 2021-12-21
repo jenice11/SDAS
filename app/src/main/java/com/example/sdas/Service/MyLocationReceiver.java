@@ -23,10 +23,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -168,6 +170,9 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                         String time = stf.format(Calendar.getInstance().getTime());
                                         String risk = "No Risk";
 
+                                        Date currentDT = Calendar.getInstance().getTime();
+
+
                                         if(distance <= 1.5){
                                             if(distance<=0.5 && distance >=0){ risk = "High"; }
                                             if(distance<=1.0 && distance >=0.5){ risk = "Medium"; }
@@ -183,6 +188,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                             history.setLatitudeB(latitudeB);
                                             history.setLongitudeB(longitudeB);
                                             history.setRisk(risk);
+                                            history.setTimestamp(history.getTimestampLong());
+                                            history.setDatetime(currentDT);
 
                                             listhistory.setValue(history);
                                         }
@@ -208,6 +215,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
         return results[0];
     }
+
 }
 
 
