@@ -58,8 +58,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
 
     }
 
-    // Function to tell the class about the Card view (here
-    // "person.xml")in
+    // Function to tell the class about the Card view
     // which the data will be shown
     @NonNull
     @Override
@@ -73,8 +72,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
         return new HistoryAdapter.HistoryViewholder(view);
     }
 
-    // Sub Class to create references of the views in Crad
-    // view (here "person.xml")
+    // Sub Class to create references of the views in Card
     class HistoryViewholder
             extends RecyclerView.ViewHolder {
         TextView date, time, distance, risk;
@@ -90,4 +88,9 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
 
         }
     }
+
+//    @Override
+//    public History getItem(int position) {
+//        return super.getItem(getItemCount() - 1 - position);
+//    }
 }

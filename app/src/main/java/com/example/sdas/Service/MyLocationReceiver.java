@@ -25,6 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+
+import org.joda.time.DateTime;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +48,11 @@ public class MyLocationReceiver extends BroadcastReceiver {
     Double distance;
     DatabaseReference history = FirebaseDatabase.getInstance().getReference(Common.HISTORY);
     String key;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+    long ct = System.currentTimeMillis();
+
+
     DatabaseReference publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
 
     @Override
@@ -52,6 +60,10 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
         Paper.init(context);
         uid = Paper.book().read(Common.USER_UID_SAVE_KEY);
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        mEditor = mPreferences.edit();
+
 
         if(intent != null)
         {
@@ -170,15 +182,14 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                         String time = stf.format(Calendar.getInstance().getTime());
                                         String risk = "No Risk";
 
-                                        Date currentDT = Calendar.getInstance().getTime();
-
-
                                         if(distance <= 1.5){
                                             if(distance<=0.5 && distance >=0){ risk = "High"; }
                                             if(distance<=1.0 && distance >=0.5){ risk = "Medium"; }
                                             if(distance<=1.5 && distance >=1.0){ risk = "Low"; }
 
                                             History history = new History();
+
+
 
                                             history.setDistance(distance);
                                             history.setDate(date);
@@ -188,10 +199,22 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                             history.setLatitudeB(latitudeB);
                                             history.setLongitudeB(longitudeB);
                                             history.setRisk(risk);
-                                            history.setTimestamp(history.getTimestampLong());
-                                            history.setDatetime(currentDT);
+//                                            history.setTimestamp(history.getTimestampLong());
+
+                                            history.setTimestamp(ct);
+
+                                            mEditor.putLong("currentTime", ct);
+                                            mEditor.commit();
+
+                                            System.out.println("11Shared current time = " + ct);
+
+
 
                                             listhistory.setValue(history);
+
+
+
+
                                         }
                                     }
                                 }

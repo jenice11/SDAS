@@ -13,6 +13,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -21,6 +22,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -57,12 +59,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import org.joda.time.DateTime;
+
 
 public class TrackingService extends Service {
     private LocationRequest locationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     DatabaseReference user_history;
     DatabaseReference publicLocation;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
+
 
     public TrackingService() {
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
@@ -80,21 +88,18 @@ public class TrackingService extends Service {
         updateLocation();
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        String date = sdf.format(Calendar.getInstance().getTime());
-
-        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        String time = stf.format(Calendar.getInstance().getTime());
-
-        Date currentDT = Calendar.getInstance().getTime();
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
 
 
+        Long ct = mPreferences.getLong("currentTime", 0);
 
-        System.out.println("Current time = " + currentDT);
 
+        System.out.println("Shared current time = " + ct);
 
+        user_history.orderByChild("timestamp").startAt(ct)
         //under construction
-        user_history.orderByChild("datetime").startAt(String.valueOf(currentDT))
+//        user_history.orderByChild("datetime").startAt(String.valueOf(currentDT))
 //        user_history.orderByChild("timestamp").startAt(String.valueOf(ServerValue.TIMESTAMP))
                 .addChildEventListener(new ChildEventListener() {
 //        user_history.addChildEventListener(new ChildEventListener() {
@@ -131,7 +136,9 @@ public class TrackingService extends Service {
             }
         });
 //        return START_STICKY;
-        return super.onStartCommand(intent, flags, startId);
+//        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
+
     }
 
     private void buildLocationRequest() {
@@ -146,7 +153,6 @@ public class TrackingService extends Service {
         buildLocationRequest();
         Log.d(TAG, "AT update location tracking service");
 
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -159,13 +165,11 @@ public class TrackingService extends Service {
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
-
     }
 
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(this, MyLocationReceiver.class);
         intent.setAction(MyLocationReceiver.ACTION);
-
 
         return PendingIntent.getBroadcast(this,111,intent,PendingIntent.FLAG_ONE_SHOT);
     }
@@ -198,12 +202,5 @@ public class TrackingService extends Service {
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(999, builder.build());
-
-
     }
-
-
-
-
-
 }

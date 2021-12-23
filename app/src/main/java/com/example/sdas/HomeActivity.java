@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -126,13 +127,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // the Adapter class itself
         adapter = new HistoryAdapter(options);
         // Connecting Adapter class with the Recycler view*/
+
         recyclerView.setAdapter(adapter);
 
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
+        layoutManager.setSmoothScrollbarEnabled(true);
+
         recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.getLayoutManager().scrollToPosition(0);
 
+        layoutManager.scrollToPositionWithOffset(10, 0);
 
+        recyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+            }
+        }, 1000);
 
         ActivityCompat.requestPermissions(HomeActivity.this,
                 new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
@@ -256,9 +268,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStart();
         adapter.startListening();
-//        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
-        adapter.notifyDataSetChanged();
-
     }
 
     // Function to tell the app to stop getting
@@ -271,7 +280,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDataforSummaryHistory() {
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
-        user_history.addChildEventListener(new ChildEventListener() {
+        user_history.orderByChild("timestamp").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 

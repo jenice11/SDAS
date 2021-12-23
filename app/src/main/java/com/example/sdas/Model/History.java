@@ -14,16 +14,6 @@ public class History {
     private double latitudeA, latitudeB, longitudeA,longitudeB;
     private Long timestamp;
 
-    public Date getDatetime() {
-        return datetime;
-    }
-
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
-    }
-
-    private Date datetime;
-
     public History() {
     }
 
