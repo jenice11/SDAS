@@ -70,8 +70,6 @@ public class TrackingService extends Service {
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
-
-
     public TrackingService() {
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
     }
@@ -106,11 +104,9 @@ public class TrackingService extends Service {
             //        user_history.limitToLast(1).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                notification();
-
-                Log.w(TAG, ">>>>>>>>>new history added");
-
-                System.out.println("Firebase timestamp = " + snapshot.getValue(History.class).getTimestampLong());
+                double distance = snapshot.getValue(History.class).getDistance();
+                notification(distance);
+//                System.out.println("Firebase timestamp = " + snapshot.getValue(History.class).getTimestampLong());
 
 
             }
@@ -151,8 +147,7 @@ public class TrackingService extends Service {
 
     private void updateLocation() {
         buildLocationRequest();
-        Log.d(TAG, "AT update location tracking service");
-
+//        Log.d(TAG, "AT update location tracking service");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -174,7 +169,7 @@ public class TrackingService extends Service {
         return PendingIntent.getBroadcast(this,111,intent,PendingIntent.FLAG_ONE_SHOT);
     }
 
-    private void notification() {
+    private void notification(double distance) {
         Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         AudioAttributes att = new AudioAttributes.Builder()
@@ -182,25 +177,43 @@ public class TrackingService extends Service {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                 .build();
 
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        String stringdouble= String.format("%.2f", distance);
+
+        String risk = "zero";
+        if(distance<=0.5 && distance >=0){ risk = "HIGH"; }
+        if(distance<=1.0 && distance >=0.5){ risk = "MEDIUM"; }
+        if(distance<=1.5 && distance >=1.0){ risk = "LOW"; }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel("channel_id", "Test Notification Channel",
                     NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setDescription("My test notification channel");
+            notificationChannel.setDescription("Nearby device detected");
             notificationChannel.setSound(ringtoneUri,att);
-
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
-                .setContentTitle("Nearby device detected")
-                .setContentText("Please perform social distancing")
+                .setContentTitle("Device Nearby in " + stringdouble + "m ")
+//                .setContentText("Please perform social distancing ")
                 .setSound(ringtoneUri)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("You are at " + risk + " risk"+
+                                "\nPlease perform social distancing"))
                 .setSmallIcon(R.drawable.ic_baseline_notification_important_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_notification_important_24dp))
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
+        int id= new Random(System.currentTimeMillis()).nextInt(1000);
+
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-        managerCompat.notify(999, builder.build());
+        managerCompat.notify(id, builder.build());
     }
 }
