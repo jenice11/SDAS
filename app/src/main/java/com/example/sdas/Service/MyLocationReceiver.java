@@ -135,15 +135,15 @@ public class MyLocationReceiver extends BroadcastReceiver {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String abc = snapshot.getKey();
-
-                        Log.d("what key===", abc);
+//                        String abc = snapshot.getKey();
+//
+//                        Log.d("what key===", abc);
                         MyLocation currentlocation = snapshot.getValue(MyLocation.class);
 
                         double latA = (double) currentlocation.getLatitude();
                         double longA = (double) currentlocation.getLongitude();
-                        System.out.println("PLACEHOLDER");
-                        System.out.println("A lat  " + latA + "A long "+ longA);
+//                        System.out.println("PLACEHOLDER");
+//                        System.out.println("A lat  " + latA + "A long "+ longA);
 
                         double latitudeB=0, longitudeB=0, x = 0, y = 0;
 
@@ -155,7 +155,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                     Log.d("LIST", String.valueOf(location.getLatitude()) + ", " + String.valueOf(location.getLongitude()));
                                     if(latA == location.getLatitude() && longA ==location.getLongitude())
                                     {
-                                        System.out.println("Coordinate A same user - lat  " + latA + "long "+ longA);
+//                                        System.out.println("Coordinate A same user - lat  " + latA + "long "+ longA);
                                     }
                                     else{
                                         latitudeB = Double.valueOf(location.getLatitude());
@@ -163,12 +163,12 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                         x = Double.valueOf(location.getLatitude());
                                         y = Double.valueOf(location.getLongitude());
-
-                                        System.out.println("B lat  " + latitudeB + "B long "+ longitudeB);
-                                        System.out.println("x lat  " + x + "x long "+ y);
-
-                                        Log.d(TAG, "<<4 == LatA= " + latA + "LongA= " + longA);
-                                        Log.d(TAG, "<<4 == LatB= " + latitudeB + "LongB= " + longitudeB);
+//
+//                                        System.out.println("B lat  " + latitudeB + "B long "+ longitudeB);
+//                                        System.out.println("x lat  " + x + "x long "+ y);
+//
+//                                        Log.d(TAG, "<<4 == LatA= " + latA + "LongA= " + longA);
+//                                        Log.d(TAG, "<<4 == LatB= " + latitudeB + "LongB= " + longitudeB);
 
                                         distance = calculateDistance(latA,longA, latitudeB, longitudeB);
 
@@ -189,8 +189,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                             History history = new History();
 
-
-
                                             history.setDistance(distance);
                                             history.setDate(date);
                                             history.setTime(time);
@@ -208,13 +206,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                             System.out.println("11Shared current time = " + ct);
 
-
-
                                             listhistory.setValue(history);
-
-
-
-
                                         }
                                     }
                                 }

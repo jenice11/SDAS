@@ -221,7 +221,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 //            startService(new Intent(this, TrackingService.class));
             startBroadCastReceiver();
-            Toast.makeText(this, "Start tracking now Intent", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
 
 
 //            startService(new Intent(this, TrackingService.class));
@@ -289,7 +289,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 History history = snapshot.getValue(History.class);
                 String risk = history.getRisk();
-                System.out.println("COUNT risk: " + risk);
+//                System.out.println("COUNT risk: " + risk);
 
                 for (DataSnapshot snap : snapshot.getChildren())
                 {
@@ -297,14 +297,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         //If you want the node value
                         list.add(snap.getValue().toString());
-                        System.out.println("COUNT getValue: " + snap.getValue().toString());
+//                        System.out.println("COUNT getValue: " + snap.getValue().toString());
 
                         //If you want the key value
 //                        list.add(snap.getKey());
 //                        System.out.println("COUNT getKey: " + snap.getKey());
                     }
                 }
-                System.out.println("COUNT list: " + list);
+//                System.out.println("COUNT list: " + list);
 
                 int countHigh = Collections.frequency(list, "High");
                 int countMedium = Collections.frequency(list, "Medium");
