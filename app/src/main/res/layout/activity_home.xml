@@ -29,10 +29,9 @@
                 android:id="@+id/logo"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
+                android:layout_gravity="right"
                 app:srcCompat="@drawable/sdas2" />
-
         </androidx.appcompat.widget.Toolbar>
-
     </LinearLayout>
 
 <!--    <com.mancj.materialsearchbar.MaterialSearchBar-->
@@ -220,7 +219,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
+        android:fitsSystemWindows="false"
         app:itemIconTint="#666262"
         app:itemTextColor="#666262"
         app:menu="@menu/drawermenu" />

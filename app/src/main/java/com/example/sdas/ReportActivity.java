@@ -11,10 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Cache;
@@ -25,21 +24,24 @@ import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.sdas.Model.History;
+import com.example.sdas.Utils.Common;
 import com.example.sdas.Utils.VolleyController;
-
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,48 +49,39 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class StatsActivity extends AppCompatActivity {
+public class ReportActivity extends AppCompatActivity {
     //json API object url
     private String urlJsonObj = "https://corona.lmao.ninja/v3/covid-19/countries/malaysia";
     private static String TAG = MainActivity.class.getSimpleName();
     // Progress dialog
     private ProgressDialog pDialog;
-    private TextView txtCases, txtDeaths, txtTodayDeaths, txtTodayCases, txtActive, txtCritical, txtRecovered;
+    private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count, txtTodayCases, txtActive, txtCritical, txtRecovered;
+    NavigationView navigationView;
     PieChart pieChart;
     TextView name, email, empid;
     ImageView navprofile;
-
-    DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle actionBarDrawerToggle;
-    NavigationView navigationView;
-    Toolbar toolbar;
+    DatabaseReference user_history;
+    List<String> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats);
-        setTitle("Covid Statistics");
+        setContentView(R.layout.activity_report);
 
-        //declaration
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open, R.string.close);
-        actionBarDrawerToggle.syncState();
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View navView = navigationView.inflateHeaderView(R.layout.header);
+
 
         //text views
-        txtCases = findViewById(R.id.txt_cases);
-        txtDeaths = findViewById(R.id.txt_deaths);
-        txtActive = findViewById(R.id.txt_active);
+        home_risk_high_count = findViewById(R.id.home_risk_high_count);
+        home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
+        home_risk_low_count = findViewById(R.id.home_risk_low_count);
         txtRecovered = findViewById(R.id.txt_recovered);
-
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View navView = navigationView.inflateHeaderView(R.layout.header);
         pieChart = findViewById(R.id.pieChart_view);
 
         name = (TextView) navView.findViewById(R.id.name);
@@ -120,7 +113,7 @@ public class StatsActivity extends AppCompatActivity {
                         break;
 
                     case R.id.nav_covid_stat:
-                        startActivity(new Intent(getApplicationContext(),StatsActivity.class));
+                        startActivity(new Intent(getApplicationContext(), ReportActivity.class));
                         break;
 
                     case R.id.nav_sign_out:
@@ -129,11 +122,72 @@ public class StatsActivity extends AppCompatActivity {
                         break;
                 }
                 return false;
+            }
+        });
+        getDataforSummaryHistory();
+
+
+    }
+
+    private void getDataforSummaryHistory() {
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+        user_history.orderByChild("timestamp").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+//                System.out.println("COUNT Key: " + snapshot.getKey());
+//                System.out.println("COUNT CHILDREN: " + snapshot.getChildrenCount());
+
+                History history = snapshot.getValue(History.class);
+                String risk = history.getRisk();
+                System.out.println("COUNT risk: " + risk);
+
+                for (DataSnapshot snap : snapshot.getChildren())
+                {
+                    if(snap.getKey().equals("risk"))
+                    {
+                        //If you want the node value
+                        list.add(snap.getValue().toString());
+                        System.out.println("COUNT getValue: " + snap.getValue().toString());
+
+                        //If you want the key value
+//                        list.add(snap.getKey());
+//                        System.out.println("COUNT getKey: " + snap.getKey());
+                    }
+                }
+                System.out.println("COUNT list: " + list);
+
+                int countHigh = Collections.frequency(list, "High");
+                int countMedium = Collections.frequency(list, "Medium");
+                int countLow = Collections.frequency(list, "Low");
+                home_risk_high_count.setText(String.format("%d",countHigh));
+                home_risk_medium_count.setText(String.format("%d",countMedium));
+                home_risk_low_count.setText(String.format("%d",countLow));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
 
     }
+
     //handling bottom navigation
 //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 //            = item -> {
@@ -174,14 +228,6 @@ public class StatsActivity extends AppCompatActivity {
                     String Ractive = response.getString("active");
 
 
-                    txtCases.setText(Rcases);
-
-                    txtDeaths.setText(Rdeaths);
-
-                    txtRecovered.setText(Rrecovered);
-                    txtActive.setText(Ractive);
-
-
                     initPieChart();
 
                     showPieChart(Rcases,Rdeaths,Rrecovered,Ractive);
@@ -193,11 +239,8 @@ public class StatsActivity extends AppCompatActivity {
                             "Error: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 }
-
                 // hidepDialog();
             }
-
-
         },
 
                 error -> {

@@ -8,27 +8,6 @@
     android:background="@color/colorGray"
     tools:context=".StatsActivity">
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal">-->
-
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@color/fui_bgTwitter"-->
-<!--            android:elevation="4dp">-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/logo"-->
-<!--                android:layout_width="45dp"-->
-<!--                android:layout_height="45dp"-->
-<!--                android:layout_gravity="right"-->
-<!--                app:srcCompat="@drawable/sdas2" />-->
-<!--        </androidx.appcompat.widget.Toolbar>-->
-<!--    </LinearLayout>-->
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/statsrefresh"
         android:layout_width="match_parent"
@@ -36,68 +15,94 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="-141dp">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/linearLayout3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/fui_bgTwitter"
-                    android:elevation="4dp">
-
-                    <ImageView
-                        android:id="@+id/logo"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_gravity="right"
-                        app:srcCompat="@drawable/sdas2" />
-                </androidx.appcompat.widget.Toolbar>
-            </LinearLayout>
-
             <TextView
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorBlue"
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:text="Social Distancing Report"
                 android:gravity="center"
-                android:text="Malaysia Overall"
-                android:textColor="@color/colorBlack"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/linear2"
+                android:id="@+id/linear1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
                 android:padding="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView">
 
+
                 <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorCases"
+                    android:backgroundTint="@color/white"
+                    android:id="@+id/cardView7"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/textView"
+                    >
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/pieChart_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linear2"
+                android:layout_marginLeft="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linear1">
+
+                <TextView
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Encounters"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.501"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linear2">
+
+                <androidx.cardview.widget.CardView
+                    android:backgroundTint="@color/colorDeaths"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_margin="7dp"
-                  >
+                    android:layout_margin="7dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -106,11 +111,10 @@
                         android:orientation="vertical"
                         android:padding="5dp">
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cases"
+                            android:text="High Risk"
                             android:gravity="center"
                             android:textColor="@color/colorWhite"/>
 
@@ -118,14 +122,44 @@
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/colorWhite"
-                            android:id="@+id/txt_cases"
+                            android:id="@+id/home_risk_high_count"
                             android:gravity="center"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="__" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
+                <androidx.cardview.widget.CardView
+                    android:backgroundTint="@color/colorCritical"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="7dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:textColor="@color/colorWhite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Medium Risk" />
+
+                        <TextView
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorWhite"
+                            android:id="@+id/home_risk_medium_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="__" />
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
@@ -145,126 +179,20 @@
                             android:textColor="@color/colorWhite"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Recovered" />
+                            android:text="Low Risk" />
 
                         <TextView
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/colorWhite"
-                            android:id="@+id/txt_recovered"
+                            android:id="@+id/home_risk_low_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="__" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorDeaths"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="7dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <TextView
-                            android:textColor="@color/colorWhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Deaths" />
-
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/txt_deaths"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-
-
-                </androidx.cardview.widget.CardView>
-
-
             </LinearLayout>
-
-
-            <androidx.cardview.widget.CardView
-                android:backgroundTint="@color/colorActive"
-                android:id="@+id/cardView6"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_margin="25dp"
-                app:layout_constraintTop_toBottomOf="@+id/linear2"
-                tools:layout_editor_absoluteX="34dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:textColor="@color/colorWhite"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Active" />
-
-                    <TextView
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorWhite"
-                        android:id="@+id/txt_active"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="__" />
-                </LinearLayout>
-
-
-            </androidx.cardview.widget.CardView>
-
-
-            <LinearLayout
-                android:id="@+id/linear3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:padding="5dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView6">
-
-
-            <androidx.cardview.widget.CardView
-                android:backgroundTint="@color/white"
-                android:id="@+id/cardView7"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:layout_margin="25dp"
-                app:layout_constraintTop_toBottomOf="@+id/linear3"
-                >
-
-
-
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/pieChart_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-            </androidx.cardview.widget.CardView>
-            </LinearLayout>
-
-
-
 
 <!--            <com.google.android.material.bottomnavigation.BottomNavigationView-->
 <!--                android:id="@+id/nav_view"-->
