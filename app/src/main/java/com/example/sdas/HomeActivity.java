@@ -66,7 +66,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     HistoryAdapter adapter;
     DatabaseReference user_history, publicLocation;
     private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count;
-    int countHigh = 0, countMedium = 0, countLow = 0;
     List<String> list = new ArrayList<>();
 
     TextView name, email, empid;
@@ -80,7 +79,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         setTitle("Home");
-
 
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
         user_information.keepSynced(true);
@@ -109,14 +107,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
         home_risk_low_count = findViewById(R.id.home_risk_low_count);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDb = mDatabase.getReference();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
         String userKey = Common.loggedUser.getUid();
-
-        System.out.println("User ID: " + userKey);
-
 
         mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
             @Override
@@ -319,53 +312,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDataforSummaryHistory() {
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
-        user_history.orderByChild("timestamp").addChildEventListener(new ChildEventListener() {
+        user_history.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-//                System.out.println("COUNT Key: " + snapshot.getKey());
-//                System.out.println("COUNT CHILDREN: " + snapshot.getChildrenCount());
-
-                History history = snapshot.getValue(History.class);
-                String risk = history.getRisk();
-//                System.out.println("COUNT risk: " + risk);
-
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren())
                 {
-                    if(snap.getKey().equals("risk"))
-                    {
-                        //If you want the node value
-                        list.add(snap.getValue().toString());
-//                        System.out.println("COUNT getValue: " + snap.getValue().toString());
-
-                        //If you want the key value
-//                        list.add(snap.getKey());
-//                        System.out.println("COUNT getKey: " + snap.getKey());
+                    for (DataSnapshot snapchild : snap.getChildren()){
+                        if(snapchild.getKey().equals("risk"))
+                        {
+                            list.add(snapchild.getValue().toString());
+                            System.out.println("COUNT getValue: " + snapchild.getValue().toString());
+                        }
                     }
+
+                    System.out.println("COUNT list: " + list);
+
+                    int countHigh = Collections.frequency(list, "High");
+                    int countMedium = Collections.frequency(list, "Medium");
+                    int countLow = Collections.frequency(list, "Low");
+                    home_risk_high_count.setText(String.format("%d",countHigh));
+                    home_risk_medium_count.setText(String.format("%d",countMedium));
+                    home_risk_low_count.setText(String.format("%d",countLow));
                 }
-//                System.out.println("COUNT list: " + list);
-
-                int countHigh = Collections.frequency(list, "High");
-                int countMedium = Collections.frequency(list, "Medium");
-                int countLow = Collections.frequency(list, "Low");
-                home_risk_high_count.setText(String.format("%d",countHigh));
-                home_risk_medium_count.setText(String.format("%d",countMedium));
-                home_risk_low_count.setText(String.format("%d",countLow));
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                System.out.println("COUNT list: " + list);
+                list.clear();
             }
 
             @Override

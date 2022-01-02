@@ -13,7 +13,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Cache;
@@ -37,11 +40,13 @@ import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,31 +66,63 @@ public class ReportActivity extends AppCompatActivity {
     // Progress dialog
     private ProgressDialog pDialog;
     private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count, txtTodayCases, txtActive, txtCritical, txtRecovered;
-    NavigationView navigationView;
     PieChart pieChart;
     TextView name, email, empid;
     ImageView navprofile;
     DatabaseReference user_history;
     List<String> list = new ArrayList<>();
 
+    //Header & Navigation Menu
+    DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+    NavigationView navigationView;
+    Toolbar toolbar;
+    TextView userName,userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+        setTitle("Social Distancing Report");
 
-
+        //declaration
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open, R.string.close);
+        actionBarDrawerToggle.syncState();
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
+        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View navView = navigationView.inflateHeaderView(R.layout.header);
 
         //text views
         home_risk_high_count = findViewById(R.id.home_risk_high_count);
         home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
         home_risk_low_count = findViewById(R.id.home_risk_low_count);
         txtRecovered = findViewById(R.id.txt_recovered);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View navView = navigationView.inflateHeaderView(R.layout.header);
         pieChart = findViewById(R.id.pieChart_view);
 
-        name = (TextView) navView.findViewById(R.id.name);
-        email = (TextView) navView.findViewById(R.id.email);
+        userName = (TextView) navView.findViewById(R.id.name);
+        userEmail = (TextView) navView.findViewById(R.id.email);
+
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mDb = mDatabase.getReference();
+        String userKey = Common.loggedUser.getUid();
+
+        mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String uName = dataSnapshot.child("name").getValue(String.class);
+                String uEmail = dataSnapshot.child("email").getValue(String.class);
+
+                userName.setText(uName);
+                userEmail.setText(uEmail);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
 
         //progress dialog
         // pDialog = new ProgressDialog(this);
@@ -93,11 +130,11 @@ public class ReportActivity extends AppCompatActivity {
         // pDialog.setCancelable(false);
 
         //parsing json data
-        parseJSON();
+        getDataforSummaryHistory();
         //adding swipe to refresh
         final SwipeRefreshLayout pullToRefresh = findViewById(R.id.statsrefresh);
         pullToRefresh.setOnRefreshListener(() -> {
-            parseJSON();
+            getDataforSummaryHistory();
             pullToRefresh.setRefreshing(false);
         });
         //bottom navigation
@@ -113,71 +150,50 @@ public class ReportActivity extends AppCompatActivity {
                         break;
 
                     case R.id.nav_covid_stat:
-                        startActivity(new Intent(getApplicationContext(), ReportActivity.class));
+                        startActivity(new Intent(getApplicationContext(),StatsActivity.class));
+                        break;
+                    case R.id.nav_report:
+                        startActivity(new Intent(getApplicationContext(),ReportActivity.class));
                         break;
 
                     case R.id.nav_sign_out:
                         FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                         break;
                 }
                 return false;
             }
         });
-        getDataforSummaryHistory();
-
-
     }
 
     private void getDataforSummaryHistory() {
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
-        user_history.orderByChild("timestamp").addChildEventListener(new ChildEventListener() {
+        user_history.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-//                System.out.println("COUNT Key: " + snapshot.getKey());
-//                System.out.println("COUNT CHILDREN: " + snapshot.getChildrenCount());
-
-                History history = snapshot.getValue(History.class);
-                String risk = history.getRisk();
-                System.out.println("COUNT risk: " + risk);
-
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren())
                 {
-                    if(snap.getKey().equals("risk"))
-                    {
-                        //If you want the node value
-                        list.add(snap.getValue().toString());
-                        System.out.println("COUNT getValue: " + snap.getValue().toString());
-
-                        //If you want the key value
-//                        list.add(snap.getKey());
-//                        System.out.println("COUNT getKey: " + snap.getKey());
+                    for (DataSnapshot snapchild : snap.getChildren()){
+                        if(snapchild.getKey().equals("risk"))
+                        {
+                            list.add(snapchild.getValue().toString());
+                            System.out.println("COUNT getValue: " + snapchild.getValue().toString());
+                        }
                     }
+
+                    System.out.println("COUNT list: " + list);
+
+                    int countHigh = Collections.frequency(list, "High");
+                    int countMedium = Collections.frequency(list, "Medium");
+                    int countLow = Collections.frequency(list, "Low");
+
+                    calculateScore(countHigh,countMedium,countLow);
+                    home_risk_high_count.setText(String.format("%d",countHigh));
+                    home_risk_medium_count.setText(String.format("%d",countMedium));
+                    home_risk_low_count.setText(String.format("%d",countLow));
                 }
                 System.out.println("COUNT list: " + list);
-
-                int countHigh = Collections.frequency(list, "High");
-                int countMedium = Collections.frequency(list, "Medium");
-                int countLow = Collections.frequency(list, "Low");
-                home_risk_high_count.setText(String.format("%d",countHigh));
-                home_risk_medium_count.setText(String.format("%d",countMedium));
-                home_risk_low_count.setText(String.format("%d",countLow));
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                list.clear();
             }
 
             @Override
@@ -185,7 +201,21 @@ public class ReportActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    private void calculateScore(int countHigh, int countMedium, int countLow){
+        int high = 3;
+        int medium = 2;
+        int low = 1;
+        int scorePositive,scoreNegative;
+
+        scorePositive = 100;
+        scoreNegative = (countHigh * high) + (countMedium * medium) + (countLow * low);
+
+
+
+        initPieChart();
+        showPieChart(scorePositive,scoreNegative);
     }
 
     //handling bottom navigation
@@ -211,89 +241,88 @@ public class ReportActivity extends AppCompatActivity {
     /**
      * getting json object {
      */
-    private void parseJSON() {
-        // showpDialog();
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                urlJsonObj, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
-
-                try {
-                    // Parsing json object response
-                    // response will be a json object
-                    String Rcases = response.getString("cases");
-                    String Rdeaths = response.getString("deaths");
-                    String Rrecovered = response.getString("recovered");
-                    String Ractive = response.getString("active");
-
-
-                    initPieChart();
-
-                    showPieChart(Rcases,Rdeaths,Rrecovered,Ractive);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),
-                            "Error: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-                // hidepDialog();
-            }
-        },
-
-                error -> {
-                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    Toast.makeText(getApplicationContext(),
-                            error.getMessage(), Toast.LENGTH_SHORT).show();
-                    // hide the progress dialog
-                    // hidepDialog();
-                }) {
-
-            //cache for 24 if user not connected to internet
-            @Override
-            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                try {
-
-                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
-                    if (cacheEntry == null) {
-                        cacheEntry = new Cache.Entry();
-                    }
-                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
-                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
-                    long now = System.currentTimeMillis();
-                    final long softExpire = now + cacheHitButRefreshed;
-                    final long ttl = now + cacheExpired;
-                    cacheEntry.data = response.data;
-                    cacheEntry.softTtl = softExpire;
-                    cacheEntry.ttl = ttl;
-                    String headerValue;
-                    headerValue = response.headers.get("Date");
-                    if (headerValue != null) {
-                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
-                    }
-                    headerValue = response.headers.get("Last-Modified");
-                    if (headerValue != null) {
-                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
-                    }
-                    cacheEntry.responseHeaders = response.headers;
-                    final String jsonString = new String(response.data,
-                            HttpHeaderParser.parseCharset(response.headers));
-                    return Response.success(new JSONObject(jsonString), cacheEntry);
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (JSONException e) {
-                    return Response.error(new ParseError(e));
-                }
-            }
-        };
-
-        // Adding request to request queue
-        VolleyController.getInstance().addToRequestQueue(jsonObjReq);
-
-
-    }
+//    private void parseJSON() {
+//        // showpDialog();
+//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+//                urlJsonObj, null, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                Log.d(TAG, response.toString());
+//
+//                try {
+//                    // Parsing json object response
+//                    // response will be a json object
+//                    String Rcases = response.getString("cases");
+//                    String Rdeaths = response.getString("deaths");
+//                    String Rrecovered = response.getString("recovered");
+//                    String Ractive = response.getString("active");
+//
+//
+//
+//                    initPieChart();
+//
+//                    showPieChart(Rcases,Rdeaths,Rrecovered,Ractive);
+//
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(getApplicationContext(),
+//                            "Error: " + e.getMessage(),
+//                            Toast.LENGTH_LONG).show();
+//                }
+//                // hidepDialog();
+//            }
+//        },
+//
+//                error -> {
+//                    VolleyLog.d(TAG, "Error: " + error.getMessage());
+//                    Toast.makeText(getApplicationContext(),
+//                            error.getMessage(), Toast.LENGTH_SHORT).show();
+//                    // hide the progress dialog
+//                    // hidepDialog();
+//                }) {
+//
+//            //cache for 24 if user not connected to internet
+//            @Override
+//            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+//                try {
+//
+//                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
+//                    if (cacheEntry == null) {
+//                        cacheEntry = new Cache.Entry();
+//                    }
+//                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
+//                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
+//                    long now = System.currentTimeMillis();
+//                    final long softExpire = now + cacheHitButRefreshed;
+//                    final long ttl = now + cacheExpired;
+//                    cacheEntry.data = response.data;
+//                    cacheEntry.softTtl = softExpire;
+//                    cacheEntry.ttl = ttl;
+//                    String headerValue;
+//                    headerValue = response.headers.get("Date");
+//                    if (headerValue != null) {
+//                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+//                    }
+//                    headerValue = response.headers.get("Last-Modified");
+//                    if (headerValue != null) {
+//                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
+//                    }
+//                    cacheEntry.responseHeaders = response.headers;
+//                    final String jsonString = new String(response.data,
+//                            HttpHeaderParser.parseCharset(response.headers));
+//                    return Response.success(new JSONObject(jsonString), cacheEntry);
+//                } catch (UnsupportedEncodingException e) {
+//                    return Response.error(new ParseError(e));
+//                } catch (JSONException e) {
+//                    return Response.error(new ParseError(e));
+//                }
+//            }
+//        };
+//
+//        // Adding request to request queue
+//        VolleyController.getInstance().addToRequestQueue(jsonObjReq);
+//    }
 
 
     private void showpDialog() {
@@ -306,33 +335,26 @@ public class ReportActivity extends AppCompatActivity {
             pDialog.dismiss();
     }
 
-    private void showPieChart(String Rcases,String Rdeaths,String Rrecovered,String Ractive){
+    private void showPieChart(int scorePositive, int scoreNegative) {
 
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
         String label = "";
 
         //initializing data
         Map<String, Integer> typeAmountMap = new HashMap<>();
-        typeAmountMap.put("Total Cases",Integer.parseInt(Rcases));
-        typeAmountMap.put("Recovered",Integer.parseInt(Rrecovered));;
-        typeAmountMap.put("Active",Integer.parseInt(Ractive));
-        typeAmountMap.put("Deaths",Integer.parseInt(Rdeaths));
-
+        typeAmountMap.put("Negative",scoreNegative);
+        typeAmountMap.put("Positive",scorePositive);
 
         //initializing colors for the entries
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.parseColor("#D60F0F"));
-        colors.add(Color.parseColor("#0288D1"));
-        colors.add(Color.parseColor("#7A2CF0"));
-        colors.add(Color.parseColor("#43A047"));
+        colors.add(Color.parseColor("#DAF1FB"));
+        colors.add(Color.parseColor("#3495BD"));
 
 
         //input data and fit data into pie chart entry
         for(String type: typeAmountMap.keySet()){
             pieEntries.add(new PieEntry(typeAmountMap.get(type).floatValue(), type));
         }
-
-
 
         //collecting the entries with label name
         PieDataSet pieDataSet = new PieDataSet(pieEntries,label);

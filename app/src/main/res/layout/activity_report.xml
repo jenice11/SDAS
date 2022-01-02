@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorGray"
-    tools:context=".StatsActivity">
+    tools:context=".ReportActivity">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/statsrefresh"
@@ -19,20 +19,45 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/fui_bgTwitter"
+                    android:elevation="4dp">
+
+                    <ImageView
+                        android:id="@+id/logo"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="right"
+                        app:srcCompat="@drawable/sdas2" />
+                </androidx.appcompat.widget.Toolbar>
+            </LinearLayout>
+
             <TextView
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorBlue"
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="52dp"
-                android:text="Social Distancing Report"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
+                android:text="Your Score"
+                android:textColor="@color/colorBlack"
+                android:textSize="32sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
             <LinearLayout
                 android:id="@+id/linear1"
@@ -226,6 +251,6 @@
         app:itemIconTint="#666262"
         app:itemTextColor="#666262"
         app:menu="@menu/drawermenu"
-         />
+        />
 
 </androidx.drawerlayout.widget.DrawerLayout>

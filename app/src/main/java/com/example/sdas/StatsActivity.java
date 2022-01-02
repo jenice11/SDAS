@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.sdas.Utils.Common;
 import com.example.sdas.Utils.VolleyController;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -40,6 +41,11 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,10 +67,12 @@ public class StatsActivity extends AppCompatActivity {
     TextView name, email, empid;
     ImageView navprofile;
 
+    //Header & Navigation Menu
     DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
     Toolbar toolbar;
+    TextView userName,userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +99,27 @@ public class StatsActivity extends AppCompatActivity {
 
         pieChart = findViewById(R.id.pieChart_view);
 
-        name = (TextView) navView.findViewById(R.id.name);
-        email = (TextView) navView.findViewById(R.id.email);
+        userName = (TextView) navView.findViewById(R.id.name);
+        userEmail = (TextView) navView.findViewById(R.id.email);
+
+
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mDb = mDatabase.getReference();
+        String userKey = Common.loggedUser.getUid();
+
+        mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String uName = dataSnapshot.child("name").getValue(String.class);
+                String uEmail = dataSnapshot.child("email").getValue(String.class);
+
+                userName.setText(uName);
+                userEmail.setText(uEmail);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
 
         //progress dialog
         // pDialog = new ProgressDialog(this);
@@ -122,10 +149,13 @@ public class StatsActivity extends AppCompatActivity {
                     case R.id.nav_covid_stat:
                         startActivity(new Intent(getApplicationContext(),StatsActivity.class));
                         break;
+                    case R.id.nav_report:
+                        startActivity(new Intent(getApplicationContext(),ReportActivity.class));
+                        break;
 
                     case R.id.nav_sign_out:
                         FirebaseAuth.getInstance().signOut();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                         break;
                 }
                 return false;
