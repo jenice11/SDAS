@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -105,47 +107,89 @@ public class SignupActivity extends AppCompatActivity {
         final String name = inputName.getText().toString().trim();
         final String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
+        boolean c1 = false,c2 = false, c3= false;
 
-
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(name)) {
+            Toast.makeText(getApplicationContext(), "Name is empty", Toast.LENGTH_SHORT).show();
             return;
+        }else{
+            c1 = true;
         }
 
+        if(isValidEmail(email) == true){
+            System.out.println("Email format valid");
+            c2 = true;
+        }
+
+//        if (TextUtils.isEmpty(email)) {
+//            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Password is empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (password.length() < 6) {
             Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
             return;
+        }else{
+            c3 = true;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        //create user
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Toast.makeText(SignupActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(SignupActivity.this, "Registration failed." + task.getException(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
+        if(c1 == true && c2 == true && c3 == true){
+            progressBar.setVisibility(View.VISIBLE);
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            //create user
+            auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            progressBar.setVisibility(View.GONE);
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Registration failed." + task.getException(),
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
 
-                            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            User user = new User(uid, email, name);
-                            mDatabase.child(Common.USER_INFORMATION).child(uid).setValue(user);
-                            updateToken(firebaseUser);
+                                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                User user = new User(uid, email, name);
+                                mDatabase.child(Common.USER_INFORMATION).child(uid).setValue(user);
+                                updateToken(firebaseUser);
 
-                            startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                                Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
 
+
+                                firebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(@NonNull Void unused) {
+                                        Toast.makeText(getApplicationContext(), "Verification Email is sent \nPlease verify first before login", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        System.out.println("Email verification not send/failed");
+
+                                    }
+                                });
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override public void run() {
+                                        //other code here Intent i = new Intent(MainActivity.this,SecondActivity.class);
+                                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                    } }, 3800);
+
+
+
+
+                            }
                         }
-                    }
-                });
+                    });
+        }
+
+
+
+
 
     }
 
@@ -178,4 +222,17 @@ public class SignupActivity extends AppCompatActivity {
         });
 
     }
+
+    public final boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            Toast.makeText(getApplicationContext(), "Email is empty!", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            System.out.println("Pattern= " + android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches());
+
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
+
 }

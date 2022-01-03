@@ -1,7 +1,9 @@
 package com.example.sdas;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +13,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.sdas.Model.User;
 import com.example.sdas.Utils.Common;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText inputEmail, inputPassword;
     private ProgressBar progressBar;
-    private TextView textview,btnSignup,skip,btnReset;
+    private TextView textview,btnSignup,btnReset;
     private Button btnLogin;
 
     @Override
@@ -73,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
         btnSignup = (TextView) findViewById(R.id.btn_signup);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (TextView) findViewById(R.id.btn_reset_password);
-
 //        signInButton.setOnClickListener(this);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
@@ -210,38 +214,87 @@ public class LoginActivity extends AppCompatActivity {
                             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                             System.out.println("CURRENT USER UID: " + firebaseUser.getUid());
 
-                            user_information.orderByKey()
-                                    .equalTo(firebaseUser.getUid())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.getValue() == null)
-                                            {
-                                                Toast.makeText(getApplicationContext(), "User doesn't exist!", Toast.LENGTH_SHORT).show();
+                            if (firebaseUser.isEmailVerified()){
+                                user_information.orderByKey()
+                                        .equalTo(firebaseUser.getUid())
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if(dataSnapshot.getValue() == null)
+                                                {
+                                                    Toast.makeText(getApplicationContext(), "User doesn't exist!", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else{
+                                                    Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
+
+                                                    DatabaseReference publicLocation;
+                                                    publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+                                                    publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+                                                }
+
+                                                Paper.book().write(Common.USER_UID_SAVE_KEY,Common.loggedUser.getUid());
                                             }
-                                            else{
-                                                Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
 
-                                                DatabaseReference publicLocation;
-                                                publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-                                                publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                             }
+                                        });
+                                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                                startActivity(intent);
+                            }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(), "Email not verified\nPlease check your email", Toast.LENGTH_LONG).show();
 
-                                            Paper.book().write(Common.USER_UID_SAVE_KEY,Common.loggedUser.getUid());
-                                        }
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override public void run() {
+                                        //other code here Intent i = new Intent(MainActivity.this,SecondActivity.class);
+                                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                switch (which) {
+                                                    case DialogInterface.BUTTON_POSITIVE:
+                                                        if (!firebaseUser.isEmailVerified()) {
+                                                            firebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(@NonNull Void unused) {
+                                                                    Toast.makeText(getApplicationContext(), "Verification Email is sent \nPlease verify first before login", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    System.out.println("Email verification not send/failed");
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                }
+                                                            });
+                                                        } else {
+                                                            System.out.println("Email verification xxx");
+                                                        }
+                                                        break;
 
-                                        }
-                                    });
-                            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                            startActivity(intent);
+                                                    case DialogInterface.BUTTON_NEGATIVE:
+                                                        //No button clicked
+                                                        break;
+                                                }
+                                            }
+                                        };
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                        builder.setMessage("Do you want to resend email verification link?")
+                                                .setPositiveButton("Yes", dialogClickListener)
+                                                .setNegativeButton("No", dialogClickListener).show();
+                                    } }, 2500);
+
+
+                            }
+
+
 
 //                            finish();
                         }
                     }
                 });
+
 
     }
     //end normal login

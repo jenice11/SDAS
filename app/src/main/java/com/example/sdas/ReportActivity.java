@@ -67,7 +67,7 @@ public class ReportActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
     private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count, txtTodayCases, txtActive, txtCritical, txtRecovered;
     PieChart pieChart;
-    TextView name, email, empid;
+    TextView textViewScore,textViewComment;
     ImageView navprofile;
     DatabaseReference user_history;
     List<String> list = new ArrayList<>();
@@ -106,6 +106,7 @@ public class ReportActivity extends AppCompatActivity {
         userName = (TextView) navView.findViewById(R.id.name);
         userEmail = (TextView) navView.findViewById(R.id.email);
 
+
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDb = mDatabase.getReference();
         String userKey = Common.loggedUser.getUid();
@@ -137,8 +138,6 @@ public class ReportActivity extends AppCompatActivity {
             getDataforSummaryHistory();
             pullToRefresh.setRefreshing(false);
         });
-        //bottom navigation
-//        BottomNavigationView navigation = findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -207,132 +206,40 @@ public class ReportActivity extends AppCompatActivity {
         int high = 3;
         int medium = 2;
         int low = 1;
-        int scorePositive,scoreNegative;
+        int scorePositive,scoreNegative,overallScore;
+        String comment = null;
 
         scorePositive = 100;
         scoreNegative = (countHigh * high) + (countMedium * medium) + (countLow * low);
 
+        textViewScore = findViewById(R.id.textViewScore);
+        textViewComment = findViewById(R.id.textViewComment);
+        overallScore = scorePositive - scoreNegative;
 
+        if(scoreNegative<=20)
+        {
+            textViewScore.setTextColor(Color.parseColor("#43A047"));
+            textViewComment.setTextColor(Color.parseColor("#43A047"));
+            comment = "You are at low risk!";
+        }
+        else if(scoreNegative <=40 && scoreNegative >=20)
+        {
+            textViewScore.setTextColor(Color.parseColor("#A84420"));
+            textViewComment.setTextColor(Color.parseColor("#A84420"));
+            comment = "You are at medium risk!";
+        }
+        else if(scoreNegative >=40)
+        {
+            textViewScore.setTextColor(Color.RED);
+            textViewComment.setTextColor(Color.RED);
+            comment = "You are at high risk!";
+        }
+
+        textViewScore.setText(String.valueOf(overallScore));
+        textViewComment.setText(comment);
 
         initPieChart();
         showPieChart(scorePositive,scoreNegative);
-    }
-
-    //handling bottom navigation
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = item -> {
-//        switch (item.getItemId()) {
-//            case R.id.navigation_home:
-//                startActivity(new Intent(StatsActivity.this, MainActivity.class));
-//                finish();
-//            case R.id.navigation_stats:
-//
-//
-//                return true;
-//            case R.id.navigation_settings:
-//                startActivity(new Intent(StatsActivity.this, SettingMoreActivity.class));
-//                finish();
-//
-//
-//        }
-//        return false;
-//    };
-
-    /**
-     * getting json object {
-     */
-//    private void parseJSON() {
-//        // showpDialog();
-//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-//                urlJsonObj, null, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                Log.d(TAG, response.toString());
-//
-//                try {
-//                    // Parsing json object response
-//                    // response will be a json object
-//                    String Rcases = response.getString("cases");
-//                    String Rdeaths = response.getString("deaths");
-//                    String Rrecovered = response.getString("recovered");
-//                    String Ractive = response.getString("active");
-//
-//
-//
-//                    initPieChart();
-//
-//                    showPieChart(Rcases,Rdeaths,Rrecovered,Ractive);
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    Toast.makeText(getApplicationContext(),
-//                            "Error: " + e.getMessage(),
-//                            Toast.LENGTH_LONG).show();
-//                }
-//                // hidepDialog();
-//            }
-//        },
-//
-//                error -> {
-//                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-//                    Toast.makeText(getApplicationContext(),
-//                            error.getMessage(), Toast.LENGTH_SHORT).show();
-//                    // hide the progress dialog
-//                    // hidepDialog();
-//                }) {
-//
-//            //cache for 24 if user not connected to internet
-//            @Override
-//            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-//                try {
-//
-//                    Cache.Entry cacheEntry = HttpHeaderParser.parseCacheHeaders(response);
-//                    if (cacheEntry == null) {
-//                        cacheEntry = new Cache.Entry();
-//                    }
-//                    final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
-//                    final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
-//                    long now = System.currentTimeMillis();
-//                    final long softExpire = now + cacheHitButRefreshed;
-//                    final long ttl = now + cacheExpired;
-//                    cacheEntry.data = response.data;
-//                    cacheEntry.softTtl = softExpire;
-//                    cacheEntry.ttl = ttl;
-//                    String headerValue;
-//                    headerValue = response.headers.get("Date");
-//                    if (headerValue != null) {
-//                        cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
-//                    }
-//                    headerValue = response.headers.get("Last-Modified");
-//                    if (headerValue != null) {
-//                        cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
-//                    }
-//                    cacheEntry.responseHeaders = response.headers;
-//                    final String jsonString = new String(response.data,
-//                            HttpHeaderParser.parseCharset(response.headers));
-//                    return Response.success(new JSONObject(jsonString), cacheEntry);
-//                } catch (UnsupportedEncodingException e) {
-//                    return Response.error(new ParseError(e));
-//                } catch (JSONException e) {
-//                    return Response.error(new ParseError(e));
-//                }
-//            }
-//        };
-//
-//        // Adding request to request queue
-//        VolleyController.getInstance().addToRequestQueue(jsonObjReq);
-//    }
-
-
-    private void showpDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hidepDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
     }
 
     private void showPieChart(int scorePositive, int scoreNegative) {
