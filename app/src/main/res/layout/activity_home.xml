@@ -41,177 +41,335 @@
 <!--        app:mt_hint="Enter Email"-->
 <!--        app:mt_maxSuggestionsCount="50"/>-->
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/cardview_dark_background"/>
-
-
     <androidx.cardview.widget.CardView
-        android:id="@+id/mainCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center"
-        android:elevation="8dp"
-        app:cardCornerRadius="4dp">
+        android:layout_margin="12dp">
 
-        <TableLayout
-            android:id="@+id/tableLayout1"
-            android:gravity="center"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+    <LinearLayout
+        android:id="@+id/linearAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear1">
 
-            <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
 
-                <TextView
-                    android:id="@+id/home_risk_high"
+
+        <!-- Today Encounter -->
+        <LinearLayout
+            android:id="@+id/linearDaily"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear1">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:text="Encounters Today"
+                android:textColor="@color/colorBlack"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearDaily">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="75dp"
+                android:layout_margin="7dp"
+                android:backgroundTint="@color/colorDeaths">
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"
-                    android:text="@string/risk_high"
-                    android:textColor="@color/colorRed"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
-                <TextView
-                    android:id="@+id/home_risk_medium"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="High Risk"
+                        android:textColor="@color/colorWhite" />
+
+                    <TextView
+                        android:id="@+id/home_risk_high_count_daily"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="__"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="75dp"
+                android:layout_margin="7dp"
+                android:backgroundTint="@color/colorCritical">
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"
-                    android:text="@string/risk_medium"
-                    android:textColor="@color/orange"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
-                <TextView
-                    android:id="@+id/home_risk_low"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium Risk"
+                        android:textColor="@color/colorWhite" />
+
+                    <TextView
+                        android:id="@+id/home_risk_medium_count_daily"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="__"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="75dp"
+                android:layout_margin="7dp"
+                android:backgroundTint="@color/colorRecovered">
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"
-                    android:text="@string/risk_low"
-                    android:textColor="@color/colorGreen"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
-            </TableRow>
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
-            <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Low Risk"
+                        android:textColor="@color/colorWhite" />
 
-                <TextView
-                    android:id="@+id/home_risk_high_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:text="@string/test_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/home_risk_low_count_daily"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="__"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:id="@+id/home_risk_medium_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:text="@string/test_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/home_risk_low_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:text="@string/test_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
-            </TableRow>
-        </TableLayout>
+    </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <LinearLayout
+
+
+    <!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/mainCardView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:layout_marginTop="9dp"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        android:gravity="center"-->
+<!--        android:elevation="8dp"-->
+<!--        app:cardCornerRadius="4dp">-->
+
+<!--        <TableLayout-->
+<!--            android:id="@+id/tableLayout1"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_width="fill_parent"-->
+<!--            android:layout_height="wrap_content" >-->
+
+<!--            <TableRow-->
+<!--            android:id="@+id/tableRow1"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" >-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_risk_high"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="24dp"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:layout_marginRight="12dp"-->
+<!--                    android:text="@string/risk_high"-->
+<!--                    android:textColor="@color/colorRed"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_risk_medium"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="24dp"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:layout_marginRight="12dp"-->
+<!--                    android:text="@string/risk_medium"-->
+<!--                    android:textColor="@color/orange"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"/>-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_risk_low"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    android:layout_marginLeft="24dp"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:layout_marginRight="12dp"-->
+<!--                    android:text="@string/risk_low"-->
+<!--                    android:textColor="@color/colorGreen"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"/>-->
+<!--            </TableRow>-->
+
+<!--            <TableRow>-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_risk_high_count"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="24dp"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:layout_marginRight="12dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="@string/test_text"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"/>-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_risk_medium_count"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="24dp"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:layout_marginRight="12dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="@string/test_text"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"/>-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_risk_low_count"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="24dp"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:layout_marginRight="12dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="@string/test_text"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"/>-->
+<!--            </TableRow>-->
+<!--        </TableLayout>-->
+<!--    </androidx.cardview.widget.CardView>-->
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="80dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp">
 
-        <Button
-            android:id="@+id/trackButton"
-            android:layout_width="150dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="#43D9FF"
-            android:layout_margin="10dp"
-
-            android:text="Start Tracking" />
-
-
-        <Button
-            android:id="@+id/stopButton"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="#43D9FF"
-            android:layout_margin="10dp"
-            android:text="Stop Tracking" />
-
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center"
-            android:text="Detection History List"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
 
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="@color/cardview_dark_background"/>
+            <Button
+                android:id="@+id/trackButton"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="#43D9FF"
+                android:layout_margin="10dp"
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_all_history"
-        
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+                android:text="Start Tracking" />
+
+
+            <Button
+                android:id="@+id/stopButton"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="#FFB98F"
+                android:layout_margin="10dp"
+                android:text="Stop Tracking" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="Today's Detection History List"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/cardview_dark_background"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_all_history"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 </LinearLayout>
     <com.google.android.material.navigation.NavigationView

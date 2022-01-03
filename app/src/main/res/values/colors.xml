@@ -24,4 +24,6 @@
     <color name="colorActive">#0288D1</color>
     <color name="colorCritical">#FFA000</color>
 
+    <color name="darkblue">#3E5FB8</color>
+
 </resources>

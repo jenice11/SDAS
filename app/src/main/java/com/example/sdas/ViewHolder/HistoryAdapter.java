@@ -48,11 +48,11 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
 
         holder.risk.setText(model.getRisk());
         if(model.getRisk().equals("High"))
-            holder.risk.setTextColor(Color.RED);
+            holder.risk.setTextColor(Color.parseColor("#D60F0F"));
         else if(model.getRisk().equals("Medium"))
-            holder.risk.setTextColor(Color.parseColor("#A84420"));
+            holder.risk.setTextColor(Color.parseColor("#FFA000"));
         else
-            holder.risk.setTextColor(Color.parseColor("#19543E"));
+            holder.risk.setTextColor(Color.parseColor("#43A047"));
 
 
 

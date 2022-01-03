@@ -4,32 +4,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.Cache;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.sdas.Model.History;
 import com.example.sdas.Utils.Common;
-import com.example.sdas.Utils.VolleyController;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -40,20 +27,15 @@ import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +47,10 @@ public class ReportActivity extends AppCompatActivity {
     private static String TAG = MainActivity.class.getSimpleName();
     // Progress dialog
     private ProgressDialog pDialog;
-    private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count, txtTodayCases, txtActive, txtCritical, txtRecovered;
+    private TextView riskHighCount, riskMediumCount, riskLowCount;
+    private TextView riskHighCountWeekly, riskMediumCountWeekly, riskLowCountWeekly;
+    private TextView riskHighCountDaily, riskMediumCountDaily, riskLowCountDaily;
+
     PieChart pieChart;
     TextView textViewScore,textViewComment;
     ImageView navprofile;
@@ -97,10 +82,16 @@ public class ReportActivity extends AppCompatActivity {
         View navView = navigationView.inflateHeaderView(R.layout.header);
 
         //text views
-        home_risk_high_count = findViewById(R.id.home_risk_high_count);
-        home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
-        home_risk_low_count = findViewById(R.id.home_risk_low_count);
-        txtRecovered = findViewById(R.id.txt_recovered);
+        riskHighCount = findViewById(R.id.home_risk_high_count);
+        riskMediumCount = findViewById(R.id.home_risk_medium_count);
+        riskLowCount = findViewById(R.id.home_risk_low_count);
+        riskHighCountWeekly = findViewById(R.id.home_risk_high_count_weekly);
+        riskMediumCountWeekly = findViewById(R.id.home_risk_medium_count_weekly);
+        riskLowCountWeekly = findViewById(R.id.home_risk_low_count_weekly);
+        riskHighCountDaily = findViewById(R.id.home_risk_high_count_daily);
+        riskMediumCountDaily = findViewById(R.id.home_risk_medium_count_daily);
+        riskLowCountDaily = findViewById(R.id.home_risk_low_count_daily);
+
         pieChart = findViewById(R.id.pieChart_view);
 
         userName = (TextView) navView.findViewById(R.id.name);
@@ -131,11 +122,18 @@ public class ReportActivity extends AppCompatActivity {
         // pDialog.setCancelable(false);
 
         //parsing json data
+
+        getDataforSummaryHistoryDaily();
+        getDataforSummaryHistoryWeekly();
         getDataforSummaryHistory();
-        //adding swipe to refresh
+
+            //adding swipe to refresh
         final SwipeRefreshLayout pullToRefresh = findViewById(R.id.statsrefresh);
         pullToRefresh.setOnRefreshListener(() -> {
+            getDataforSummaryHistoryDaily();
+            getDataforSummaryHistoryWeekly();
             getDataforSummaryHistory();
+
             pullToRefresh.setRefreshing(false);
         });
 
@@ -147,7 +145,9 @@ public class ReportActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                         break;
-
+                    case R.id.nav_detection_log:
+                        startActivity(new Intent(getApplicationContext(),DetectionLogActivity.class));
+                        break;
                     case R.id.nav_covid_stat:
                         startActivity(new Intent(getApplicationContext(),StatsActivity.class));
                         break;
@@ -161,6 +161,7 @@ public class ReportActivity extends AppCompatActivity {
                         break;
                 }
                 return false;
+
             }
         });
     }
@@ -176,22 +177,142 @@ public class ReportActivity extends AppCompatActivity {
                         if(snapchild.getKey().equals("risk"))
                         {
                             list.add(snapchild.getValue().toString());
-                            System.out.println("COUNT getValue: " + snapchild.getValue().toString());
+//                            System.out.println("COUNT getValue: " + snapchild.getValue().toString());
                         }
                     }
 
-                    System.out.println("COUNT list: " + list);
+//                    System.out.println("COUNT list: " + list);
 
                     int countHigh = Collections.frequency(list, "High");
                     int countMedium = Collections.frequency(list, "Medium");
                     int countLow = Collections.frequency(list, "Low");
 
                     calculateScore(countHigh,countMedium,countLow);
-                    home_risk_high_count.setText(String.format("%d",countHigh));
-                    home_risk_medium_count.setText(String.format("%d",countMedium));
-                    home_risk_low_count.setText(String.format("%d",countLow));
+                    riskHighCount.setText(String.format("%d",countHigh));
+                    riskMediumCount.setText(String.format("%d",countMedium));
+                    riskLowCount.setText(String.format("%d",countLow));
                 }
                 System.out.println("COUNT list: " + list);
+                list.clear();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getDataforSummaryHistoryDaily() {
+        long todayStart, todayEnd;
+
+        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMinimum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getActualMinimum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getActualMinimum(Calendar.SECOND));
+        todayStart = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMaximum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getActualMaximum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getActualMaximum(Calendar.SECOND));
+        todayEnd = cal.getTimeInMillis();
+
+//        System.out.println("Current Time:       " + cal.getTime());
+//        System.out.println("... in milliseconds:      " + cal.getTimeInMillis());
+//        System.out.println("... First Day:      " + String.valueOf(todayStart));
+
+
+
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+        user_history.orderByChild("timestamp").startAt(todayStart).endAt(todayEnd).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren())
+                {
+                    System.out.println("Weekly List: " + snap);
+
+                    for (DataSnapshot snapchild : snap.getChildren()){
+                        if(snapchild.getKey().equals("risk"))
+                        {
+                            list.add(snapchild.getValue().toString());
+                        }
+                    }
+
+                    int countHigh = Collections.frequency(list, "High");
+                    int countMedium = Collections.frequency(list, "Medium");
+                    int countLow = Collections.frequency(list, "Low");
+
+                    calculateScore(countHigh,countMedium,countLow);
+                    riskHighCountDaily.setText(String.format("%d",countHigh));
+                    riskMediumCountDaily.setText(String.format("%d",countMedium));
+                    riskLowCountDaily.setText(String.format("%d",countLow));
+                }
+                System.out.println("COUNT list: " + list);
+
+                list.clear();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getDataforSummaryHistoryWeekly() {
+        long firstDay, lastDay;
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+
+        // get start of this week in milliseconds
+        cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+//        System.out.println("Start of this week:       " + cal.getTime());
+//        System.out.println("... in milliseconds:      " + cal.getTimeInMillis());
+        firstDay = cal.getTimeInMillis();
+
+        // start of the next week
+        cal.add(Calendar.WEEK_OF_YEAR, 1);
+//        System.out.println("Start of the next week:   " + cal.getTime());
+//        System.out.println("... in milliseconds:      " + cal.getTimeInMillis());
+        lastDay =cal.getTimeInMillis();
+
+//        System.out.println("... First Day:      " + String.valueOf(firstDay));
+//        System.out.println("... Last day:      " + String.valueOf(lastDay));
+
+
+
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+        user_history.orderByChild("timestamp").startAt(firstDay).endAt(lastDay).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren())
+                {
+                    System.out.println("Weekly List: " + snap);
+
+                    for (DataSnapshot snapchild : snap.getChildren()){
+                        if(snapchild.getKey().equals("risk"))
+                        {
+                            list.add(snapchild.getValue().toString());
+                        }
+                    }
+
+                    int countHigh = Collections.frequency(list, "High");
+                    int countMedium = Collections.frequency(list, "Medium");
+                    int countLow = Collections.frequency(list, "Low");
+
+//                    calculateScore(countHigh,countMedium,countLow);
+                    riskHighCountWeekly.setText(String.format("%d",countHigh));
+                    riskMediumCountWeekly.setText(String.format("%d",countMedium));
+                    riskLowCountWeekly.setText(String.format("%d",countLow));
+                }
+                System.out.println("COUNT list: " + list);
+
                 list.clear();
             }
 
@@ -249,8 +370,8 @@ public class ReportActivity extends AppCompatActivity {
 
         //initializing data
         Map<String, Integer> typeAmountMap = new HashMap<>();
-        typeAmountMap.put("Negative",scoreNegative);
         typeAmountMap.put("Positive",scorePositive);
+        typeAmountMap.put("Negative",scoreNegative);
 
         //initializing colors for the entries
         ArrayList<Integer> colors = new ArrayList<>();

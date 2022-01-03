@@ -28,6 +28,7 @@
         <entry key="..\:/Users/PC/AndroidStudioProjects/CovidTracker/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.194" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable-v24/button_color.xml" value="0.152" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable-v24/button_color2.xml" value="0.1025" />
+        <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable-v24/button_color3.xml" value="0.152" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable-v24/ic_illustration_login.xml" value="0.152" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable/ic_baseline_home_24dp.xml" value="0.152" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable/ic_baseline_login_24.xml" value="0.152" />
@@ -36,10 +37,11 @@
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/drawable/ic_login_socialdistancing_background.xml" value="0.152" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_all_people.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_covid_stat.xml" value="0.10597826086956522" />
+        <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_detection_log.xml" value="0.2" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_friend_request.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_home.xml" value="0.2" />
+        <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_home.xml" value="0.264" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_login.xml" value="0.264" />
-        <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_report.xml" value="0.264" />
+        <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_report.xml" value="0.176" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_resend_verify.xml" value="0.16" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_reset_password.xml" value="0.2" />
         <entry key="..\:/Users/PC/AndroidStudioProjects/SDAS/app/src/main/res/layout/activity_signup.xml" value="0.16041666666666668" />

@@ -145,7 +145,9 @@ public class StatsActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                         break;
-
+                    case R.id.nav_detection_log:
+                        startActivity(new Intent(getApplicationContext(),DetectionLogActivity.class));
+                        break;
                     case R.id.nav_covid_stat:
                         startActivity(new Intent(getApplicationContext(),StatsActivity.class));
                         break;

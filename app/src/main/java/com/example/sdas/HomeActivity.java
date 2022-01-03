@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,8 +36,6 @@ import com.example.sdas.ViewHolder.HistoryAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +62,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerView;
     HistoryAdapter adapter;
     DatabaseReference user_history, publicLocation;
-    private TextView home_risk_high_count, home_risk_medium_count, home_risk_low_count;
+    private TextView riskHighCountDaily, riskMediumCountDaily, riskLowCountDaily;
     List<String> list = new ArrayList<>();
 
     TextView name, email, empid;
@@ -103,9 +100,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mStopButton.setOnClickListener(this);
         recyclerView = findViewById(R.id.recycler_all_history);
 
-        home_risk_high_count = findViewById(R.id.home_risk_high_count);
-        home_risk_medium_count = findViewById(R.id.home_risk_medium_count);
-        home_risk_low_count = findViewById(R.id.home_risk_low_count);
+        riskHighCountDaily = findViewById(R.id.home_risk_high_count_daily);
+        riskMediumCountDaily = findViewById(R.id.home_risk_medium_count_daily);
+        riskLowCountDaily = findViewById(R.id.home_risk_low_count_daily);
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDb = mDatabase.getReference();
@@ -134,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //            userEmail.setText(email);
 //        }
 
-        getDataforSummaryHistory();
+        getDataforSummaryHistoryDaily();
 
         // Create a instance of the database and get
         // its reference
@@ -187,7 +184,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                         break;
-
+                    case R.id.nav_detection_log:
+                        startActivity(new Intent(getApplicationContext(),DetectionLogActivity.class));
+                        break;
                     case R.id.nav_covid_stat:
                     startActivity(new Intent(getApplicationContext(),StatsActivity.class));
                         break;
@@ -310,6 +309,62 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         adapter.stopListening();
     }
 
+    private void getDataforSummaryHistoryDaily() {
+        long todayStart, todayEnd;
+
+        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMinimum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getActualMinimum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getActualMinimum(Calendar.SECOND));
+        todayStart = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMaximum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getActualMaximum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getActualMaximum(Calendar.SECOND));
+        todayEnd = cal.getTimeInMillis();
+
+//        System.out.println("Current Time:       " + cal.getTime());
+//        System.out.println("... in milliseconds:      " + cal.getTimeInMillis());
+//        System.out.println("... First Day:      " + String.valueOf(todayStart));
+
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+        user_history.orderByChild("timestamp").startAt(todayStart).endAt(todayEnd).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren())
+                {
+                    System.out.println("Weekly List: " + snap);
+
+                    for (DataSnapshot snapchild : snap.getChildren()){
+                        if(snapchild.getKey().equals("risk"))
+                        {
+                            list.add(snapchild.getValue().toString());
+                        }
+                    }
+
+                    int countHigh = Collections.frequency(list, "High");
+                    int countMedium = Collections.frequency(list, "Medium");
+                    int countLow = Collections.frequency(list, "Low");
+
+                    riskHighCountDaily.setText(String.format("%d",countHigh));
+                    riskMediumCountDaily.setText(String.format("%d",countMedium));
+                    riskLowCountDaily.setText(String.format("%d",countLow));
+                }
+                System.out.println("COUNT list: " + list);
+
+                list.clear();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void getDataforSummaryHistory() {
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
         user_history.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
@@ -330,9 +385,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     int countHigh = Collections.frequency(list, "High");
                     int countMedium = Collections.frequency(list, "Medium");
                     int countLow = Collections.frequency(list, "Low");
-                    home_risk_high_count.setText(String.format("%d",countHigh));
-                    home_risk_medium_count.setText(String.format("%d",countMedium));
-                    home_risk_low_count.setText(String.format("%d",countLow));
+                    riskHighCountDaily.setText(String.format("%d",countHigh));
+                    riskMediumCountDaily.setText(String.format("%d",countMedium));
+                    riskLowCountDaily.setText(String.format("%d",countLow));
                 }
                 System.out.println("COUNT list: " + list);
                 list.clear();

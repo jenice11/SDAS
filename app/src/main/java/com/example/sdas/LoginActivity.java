@@ -108,8 +108,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         Paper.init(this);
-
-
     }
 
 //    //google login start

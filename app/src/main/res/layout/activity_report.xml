@@ -39,7 +39,7 @@
                         android:id="@+id/logo"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
-                        android:layout_gravity="right"
+                        android:layout_gravity="end"
                         app:srcCompat="@drawable/sdas2" />
                 </androidx.appcompat.widget.Toolbar>
             </LinearLayout>
@@ -73,7 +73,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout android:orientation="vertical" android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">
 
@@ -115,269 +115,816 @@
 
             </LinearLayout>
 
+            <!-- All encounter -->
             <LinearLayout
+                android:id="@+id/linearAll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/linear2"
                 android:layout_margin="15dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linear1">
 
-                <TextView
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorBlack"
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
+                <!-- Today Encounter -->
+                <LinearLayout
+                    android:id="@+id/linearDaily"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:text="Today"
-                    android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/linear1">
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linear2">
-
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorDeaths"
-                    android:layout_width="100dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="7dp">
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+                        android:layout_marginStart="25dp"
+                        android:gravity="center"
+                        android:text="Today"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.501"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="High Risk"
-                            android:gravity="center"
-                            android:textColor="@color/colorWhite"/>
+                </LinearLayout>
 
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/home_risk_high_count"
-                            android:gravity="center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorCritical"
-                    android:layout_width="100dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="7dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <TextView
-                            android:textColor="@color/colorWhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Medium Risk" />
-
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/home_risk_medium_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorRecovered"
-                    android:layout_width="100dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="7dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <TextView
-                            android:textColor="@color/colorWhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Low Risk" />
-
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/home_risk_low_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-
-            <!-- Weekly encounter-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/linearWeekly1"
-                android:layout_margin="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linear3">
-
-                <TextView
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorBlack"
-                    android:id="@+id/tvWeekly"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/linear3"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:text="Weekly"
-                    android:gravity="center"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/linearDaily">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorDeaths">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="High Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_high_count_daily"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorCritical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Medium Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_medium_count_daily"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorRecovered">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Low Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_low_count_daily"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Weekly encounter-->
+                <LinearLayout
+                    android:id="@+id/linearWeekly1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear3">
+
+                    <TextView
+                        android:id="@+id/tvWeekly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:gravity="center"
+                        android:text="Weekly"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.501"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearWeekly2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearWeekly1">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorDeaths">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="High Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_high_count_weekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorCritical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Medium Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_medium_count_weekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorRecovered">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Low Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_low_count_weekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Overall Encounter -->
+                <LinearLayout
+                    android:id="@+id/linearOverall2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearWeekly2">
+
+                    <TextView
+                        android:id="@+id/textViewOverall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:gravity="center"
+                        android:text="Overall"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.501"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearOverall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearOverall2">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorDeaths">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="High Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_high_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorCritical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Medium Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_medium_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="100dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="7dp"
+                        android:backgroundTint="@color/colorRecovered">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Low Risk"
+                                android:textColor="@color/colorWhite" />
+
+                            <TextView
+                                android:id="@+id/home_risk_low_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="__"
+                                android:textColor="@color/colorWhite"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearWeekly1">
+<!--            &lt;!&ndash; Today Encounter &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:id="@+id/linearDaily"-->
+<!--                android:layout_margin="15dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linear1">-->
 
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorDeaths"
-                    android:layout_width="100dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="7dp">
+<!--                <TextView-->
+<!--                    android:textSize="25sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/colorBlack"-->
+<!--                    android:id="@+id/textView2"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="25dp"-->
+<!--                    android:text="Today"-->
+<!--                    android:gravity="center"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.501"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+<!--            </LinearLayout>-->
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="High Risk"
-                            android:gravity="center"
-                            android:textColor="@color/colorWhite"/>
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linear3"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linearDaily">-->
 
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/home_risk_high_count_weekly"
-                            android:gravity="center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorDeaths"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
 
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorCritical"
-                    android:layout_width="100dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="7dp">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="High Risk"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textColor="@color/colorWhite"/>-->
 
-                        <TextView
-                            android:textColor="@color/colorWhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Medium Risk" />
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_high_count_daily"-->
+<!--                            android:gravity="center"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
 
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/home_risk_medium_count_weekly"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorCritical"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
 
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/colorRecovered"
-                    android:layout_width="100dp"
-                    android:layout_height="90dp"
-                    android:layout_margin="7dp">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+<!--                        <TextView-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Medium Risk" />-->
 
-                        <TextView
-                            android:textColor="@color/colorWhite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Low Risk" />
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_medium_count_daily"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
 
-                        <TextView
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorWhite"
-                            android:id="@+id/home_risk_low_count_weekly"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="__" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorRecovered"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Low Risk" />-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_low_count_daily"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+<!--            </LinearLayout>-->
+
+<!--            &lt;!&ndash; Weekly encounter&ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:id="@+id/linearWeekly1"-->
+<!--                android:layout_margin="15dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linear3">-->
+
+<!--                <TextView-->
+<!--                    android:textSize="25sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/colorBlack"-->
+<!--                    android:id="@+id/tvWeekly"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="25dp"-->
+<!--                    android:text="Weekly"-->
+<!--                    android:gravity="center"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.501"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearWeekly2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linearWeekly1">-->
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorDeaths"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="High Risk"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textColor="@color/colorWhite"/>-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_high_count_weekly"-->
+<!--                            android:gravity="center"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorCritical"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Medium Risk" />-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_medium_count_weekly"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorRecovered"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Low Risk" />-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_low_count_weekly"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+<!--            </LinearLayout>-->
+
+<!--            &lt;!&ndash; Overall Encounter &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearOverall2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="15dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linearWeekly2">-->
+
+<!--                <TextView-->
+<!--                    android:textSize="25sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/colorBlack"-->
+<!--                    android:id="@+id/textViewOverall"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="25dp"-->
+<!--                    android:text="Overall"-->
+<!--                    android:gravity="center"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.501"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearOverall"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linearOverall2">-->
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorDeaths"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="High Risk"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textColor="@color/colorWhite"/>-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_high_count"-->
+<!--                            android:gravity="center"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorCritical"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Medium Risk" />-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_medium_count"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+
+<!--                <androidx.cardview.widget.CardView-->
+<!--                    android:backgroundTint="@color/colorRecovered"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="90dp"-->
+<!--                    android:layout_margin="7dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="5dp">-->
+
+<!--                        <TextView-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Low Risk" />-->
+
+<!--                        <TextView-->
+<!--                            android:textSize="15sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:id="@+id/home_risk_low_count"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:text="__" />-->
+<!--                    </LinearLayout>-->
+<!--                </androidx.cardview.widget.CardView>-->
+<!--            </LinearLayout>-->
+
+            <!-- end of All Encounter -->
 
 <!--            <com.google.android.material.bottomnavigation.BottomNavigationView-->
 <!--                android:id="@+id/nav_view"-->
@@ -399,6 +946,7 @@
 <!--                app:layout_constraintVertical_bias="1.0"-->
 <!--                app:menu="@menu/bottom_nav_menu" />-->
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

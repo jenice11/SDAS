@@ -69,6 +69,7 @@
         </activity>
         <activity android:name=".StatsActivity" />
         <activity android:name=".ReportActivity" />
+        <activity android:name=".DetectionLogActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".SignupActivity" />
         <activity
@@ -78,8 +79,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>
