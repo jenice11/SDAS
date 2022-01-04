@@ -49,70 +49,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:padding="5dp"
-                android:layout_margin="15dp"
+                android:orientation="vertical"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
                 android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="match_parent"
+                    app:tabSelectedTextColor="@color/white"
+                    app:tabBackground="@drawable/tab_color_selector"
+                    app:tabTextColor="@color/colorBlack"
+                    android:layout_height="40dp" />
 
-                <androidx.cardview.widget.CardView
-                    android:backgroundTint="@color/white"
-                    android:id="@+id/cardView7"
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
-                    android:layout_margin="10dp"
-                    app:layout_constraintTop_toBottomOf="@+id/textView">
-
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/pieChart_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                </androidx.cardview.widget.CardView>
-
-                <LinearLayout android:orientation="vertical" android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
-
-                    <TextView
-                        android:id="@+id/textView0"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:text="Score"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textViewScore"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:text="--"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="30sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/textViewComment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:text="--"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="22sp"/>
-            </LinearLayout>
-
-
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+                </androidx.viewpager.widget.ViewPager>
             </LinearLayout>
 
             <!-- All encounter -->
@@ -120,7 +78,10 @@
                 android:id="@+id/linearAll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -189,7 +150,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -220,7 +181,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -251,7 +212,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -273,6 +234,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:text="Weekly"
                         android:textColor="@color/colorBlack"
@@ -321,7 +283,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -352,7 +314,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -383,7 +345,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -405,6 +367,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:text="Overall"
                         android:textColor="@color/colorBlack"
@@ -453,7 +416,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -484,7 +447,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -515,7 +478,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="__"
+                                android:text="0"
                                 android:textColor="@color/colorWhite"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />

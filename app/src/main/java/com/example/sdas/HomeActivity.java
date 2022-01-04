@@ -137,6 +137,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // its reference
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
+        long todayStart, todayEnd;
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMinimum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getActualMinimum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getActualMinimum(Calendar.SECOND));
+        todayStart = cal.getTimeInMillis();
+
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMaximum(Calendar.HOUR_OF_DAY));
+        cal.set(Calendar.MINUTE, cal.getActualMaximum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND, cal.getActualMaximum(Calendar.SECOND));
+        todayEnd = cal.getTimeInMillis();
+
         // To display the Recycler view linearly
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this));
@@ -147,7 +160,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // query in the database to fetch appropriate data
         FirebaseRecyclerOptions<History> options
                 = new FirebaseRecyclerOptions.Builder<History>()
-                .setQuery(user_history, History.class)
+                .setQuery(user_history.orderByChild("timestamp").startAt(todayStart).endAt(todayEnd), History.class)
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself

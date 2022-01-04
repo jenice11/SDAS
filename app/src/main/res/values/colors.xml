@@ -25,5 +25,9 @@
     <color name="colorCritical">#FFA000</color>
 
     <color name="darkblue">#3E5FB8</color>
+    <color name="selectedTab">#2699FB</color>
+    <color name="tabColor">#CCE1FD</color>
+    <color name="unselected">#EAF3FF</color>
+
 
 </resources>
