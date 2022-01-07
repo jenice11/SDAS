@@ -48,8 +48,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 String email = inputEmail.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplication(), "Enter your registered email id", Toast.LENGTH_SHORT).show();
+                    inputEmail.setError("Email is empty");
                     return;
+                }
+                if(isValidEmail(email) ==false){
+                    inputEmail.setError("Email format is invalid");
+                    return;
+
                 }
 
                 progressBar.setVisibility(View.VISIBLE);
@@ -58,7 +63,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(ResetPasswordActivity.this, "We have sent you instructions to reset your password!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ResetPasswordActivity.this, "An email is sent to your email to reset your password", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(ResetPasswordActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
                                 }
@@ -68,6 +73,17 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    public final boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            Toast.makeText(getApplicationContext(), "Email is empty!", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            System.out.println("Pattern= " + android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches());
+
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
     }
 
 }

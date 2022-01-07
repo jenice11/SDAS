@@ -59,7 +59,7 @@ import java.util.Map;
 public class StatsActivity extends AppCompatActivity {
     //json API object url
     private String urlJsonObj = "https://corona.lmao.ninja/v3/covid-19/countries/malaysia";
-    private static String TAG = MainActivity.class.getSimpleName();
+    private static String TAG = StatsActivity.class.getSimpleName();
     // Progress dialog
     private ProgressDialog pDialog;
     private TextView txtCases, txtDeaths, txtTodayDeaths, txtTodayCases, txtActive, txtCritical, txtRecovered;
@@ -166,25 +166,6 @@ public class StatsActivity extends AppCompatActivity {
         });
 
     }
-    //handling bottom navigation
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = item -> {
-//        switch (item.getItemId()) {
-//            case R.id.navigation_home:
-//                startActivity(new Intent(StatsActivity.this, MainActivity.class));
-//                finish();
-//            case R.id.navigation_stats:
-//
-//
-//                return true;
-//            case R.id.navigation_settings:
-//                startActivity(new Intent(StatsActivity.this, SettingMoreActivity.class));
-//                finish();
-//
-//
-//        }
-//        return false;
-//    };
 
     /**
      * getting json object {

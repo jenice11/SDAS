@@ -110,7 +110,7 @@ public class SignupActivity extends AppCompatActivity {
         boolean c1 = false,c2 = false, c3= false;
 
         if (TextUtils.isEmpty(name)) {
-            Toast.makeText(getApplicationContext(), "Name is empty", Toast.LENGTH_SHORT).show();
+            inputEmail.setError("Name is empty");
             return;
         }else{
             c1 = true;
@@ -120,6 +120,9 @@ public class SignupActivity extends AppCompatActivity {
             System.out.println("Email format valid");
             c2 = true;
         }
+        else{
+            inputEmail.setError("Email format is invalid");
+        }
 
 //        if (TextUtils.isEmpty(email)) {
 //            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
@@ -127,12 +130,12 @@ public class SignupActivity extends AppCompatActivity {
 //        }
 
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "Password is empty", Toast.LENGTH_SHORT).show();
+            inputPassword.setError("Password is empty");
             return;
         }
 
         if (password.length() < 6) {
-            Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            inputPassword.setError("Password too short, enter minimum 6 characters");
             return;
         }else{
             c3 = true;
@@ -175,7 +178,6 @@ public class SignupActivity extends AppCompatActivity {
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override public void run() {
-                                        //other code here Intent i = new Intent(MainActivity.this,SecondActivity.class);
                                         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                                     } }, 3800);
 
@@ -225,7 +227,7 @@ public class SignupActivity extends AppCompatActivity {
 
     public final boolean isValidEmail(CharSequence target) {
         if (TextUtils.isEmpty(target)) {
-            Toast.makeText(getApplicationContext(), "Email is empty!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Email is empty", Toast.LENGTH_SHORT).show();
             return false;
         } else {
             System.out.println("Pattern= " + android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches());

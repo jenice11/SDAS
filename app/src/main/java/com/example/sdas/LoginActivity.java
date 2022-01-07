@@ -184,13 +184,26 @@ public class LoginActivity extends AppCompatActivity {
         final String password = inputPassword.getText().toString();
 
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+            inputEmail.setError("Email is empty");
             return;
         }
 
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+        if(isValidEmail(email) ==false){
+            inputEmail.setError("Email format is invalid");
             return;
+
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            inputPassword.setError("Password is empty");
+            return;
+        }
+
+
+        if (password.length() < 6) {
+            inputPassword.setError("Password too short, enter minimum 6 characters");
+            return;
+
         }
 
         progressBar.setVisibility(View.VISIBLE);
@@ -203,11 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                         progressBar.setVisibility(View.GONE);
                         if (!task.isSuccessful()) {
                             // there was an error
-                            if (password.length() < 6) {
-                                inputPassword.setError("Password length should be more than 6 characters");
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Auth Failed", Toast.LENGTH_LONG).show();
-                            }
+                            Toast.makeText(getApplicationContext(), "Login failed, wrong credentials", Toast.LENGTH_SHORT).show();
                         } else {
                             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                             System.out.println("CURRENT USER UID: " + firebaseUser.getUid());
@@ -247,7 +256,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override public void run() {
-                                        //other code here Intent i = new Intent(MainActivity.this,SecondActivity.class);
                                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -296,6 +304,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     //end normal login
+    public final boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            Toast.makeText(getApplicationContext(), "Email is empty!", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            System.out.println("Pattern= " + android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches());
+
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
 
 
 }
