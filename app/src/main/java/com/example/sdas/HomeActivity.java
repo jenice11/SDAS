@@ -8,8 +8,10 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,6 +72,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button mTrackButton,mStopButton;
     DatabaseReference user_information;
 
+    SharedPreferences mPreferences;
+    SharedPreferences.Editor mEditor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +84,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
         user_information.keepSynced(true);
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        mEditor = mPreferences.edit();
+
 
         //declaration
         toolbar = findViewById(R.id.toolbar);
@@ -113,6 +122,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String uName = dataSnapshot.child("name").getValue(String.class);
                 String uEmail = dataSnapshot.child("email").getValue(String.class);
+
+                mEditor.putString("name", uName);
+                mEditor.putString("email", uEmail);
 
                 userName.setText(uName);
                 userEmail.setText(uEmail);

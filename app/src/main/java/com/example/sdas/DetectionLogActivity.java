@@ -1,14 +1,18 @@
 package com.example.sdas;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -21,33 +25,36 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sdas.Model.History;
+import com.example.sdas.Model.User;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.ViewHolder.HistoryAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.uttampanchasara.pdfgenerator.CreatePdf;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import io.paperdb.Paper;
 
-public class DetectionLogActivity extends AppCompatActivity implements View.OnClickListener{
+public class DetectionLogActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Header & Navigation Menu
     DrawerLayout mDrawerLayout;
@@ -59,15 +66,19 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
     //history
     private RecyclerView recyclerView;
     HistoryAdapter adapter;
-    DatabaseReference user_history, publicLocation;
-    private TextView riskHighCountDaily, riskMediumCountDaily, riskLowCountDaily;
+    DatabaseReference user_history;
     List<String> list = new ArrayList<>();
+    static String uName, uEmail;
 
     TextView name, email, empid;
     ImageView navprofile;
-    private Button mTrackButton,mStopButton;
+    private Button logDL;
     DatabaseReference user_information;
 
+    List<History> historyList = new ArrayList<>();
+
+    SharedPreferences mPreferences;
+    SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +88,9 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
         user_information.keepSynced(true);
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        mEditor = mPreferences.edit();
 
         //declaration
         toolbar = findViewById(R.id.toolbar);
@@ -94,24 +108,8 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
         recyclerView = findViewById(R.id.recycler_all_history);
 
-
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference mDb = mDatabase.getReference();
-        String userKey = Common.loggedUser.getUid();
-
-        mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String uName = dataSnapshot.child("name").getValue(String.class);
-                String uEmail = dataSnapshot.child("email").getValue(String.class);
-
-                userName.setText(uName);
-                userEmail.setText(uEmail);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+        logDL = findViewById(R.id.btn_dl_log);
+        logDL.setOnClickListener(this);
 
         // Create a instance of the database and get
         // its reference
@@ -153,7 +151,7 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         }, 1000);
 
         ActivityCompat.requestPermissions(DetectionLogActivity.this,
-                new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE ,Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -185,13 +183,13 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         });
 
         Paper.init(this);
+
     }
 
     public void onClick(View v) {
         if(R.id.btn_dl_log == v.getId()){
-            Toast.makeText(this, "Download pdf", Toast.LENGTH_SHORT).show();
-
-//            createPDF();
+            v.setDrawingCacheEnabled(true);
+            getLog();
         }
     }
 
@@ -211,150 +209,209 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         adapter.stopListening();
     }
 
-//    private void createPDF() {
-//        PdfDocument pdfDocument = new PdfDocument();
-//
-//        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
-//
-//        File output = null;
-//
-//        int n;
-//        File outputDir = new File(Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_DOWNLOADS), "PDF");
-//        if(!outputDir.exists()){
-//            outputDir.mkdirs();
-//        }
-//
-//        Paint paint = new Paint();
-//        Paint titlePaint = new Paint();
-//
-//        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(1200,2010,1).create();
-//        PdfDocument.Page page = pdfDocument.startPage(pageInfo);
-//        Canvas canvas = page.getCanvas();
-//        ArrayList<String> name;
-//        name = new ArrayList<>();
-//        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
-//        String userId = currentFirebaseUser.getUid();
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference databaseReference = database.getReference().child("Staff").child(userId);
-//
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists()) {
-//
-//                    String sid = snapshot.child("staffId").getValue().toString();
-//                    //String sname = snapshot.child("staffName").getValue().toString();
-//                    name.add(snapshot.child("staffName").getValue().toString());
-//                    System.out.println("name: " + name);
-//                    System.out.println("test: " + name.get(0));
-//                    paint.setTextAlign(Paint.Align.LEFT);
-//                    paint.setTextSize(35f);
-//                    paint.setColor(Color.BLACK);
-//                    canvas.drawText("Staff Name: "+ name.get(0),20,640,paint);
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//
-//        System.out.println("sid: " + userId);
-//        canvas.drawBitmap(scaledbmp,0,0,paint);
-//        titlePaint.setTextAlign(Paint.Align.CENTER);
-//        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.BOLD));
-//        titlePaint.setTextSize(70);
-//        canvas.drawText("Report Analysis", (pagewidth/2)-90, 350,titlePaint);
-//
-//        paint.setColor(Color.rgb(0,113,188));
-//        paint.setTextSize(30f);
-//        paint.setTextAlign(Paint.Align.RIGHT);
-//        canvas.drawText("GOMASH",1160,40,paint);
-//
-//        titlePaint.setTextAlign(Paint.Align.CENTER);
-//        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.ITALIC));
-//        titlePaint.setTextSize(50);
-//        canvas.drawText(semester,(pagewidth/2)-90,450,titlePaint);
-//
-//
-//        paint.setTextAlign(Paint.Align.LEFT);
-//        paint.setTextSize(35f);
-//        paint.setColor(Color.BLACK);
-//        canvas.drawText("Form Type: Student Form",20,640,paint);
-//
-//        //canvas.drawText("Staff Name: "+ name,20,640,paint);
-//
-//
-//        dateFormat = new SimpleDateFormat("dd/MM/yy");
-//        canvas.drawText("Date: "+dateFormat.format(date),pagewidth-500,640,paint);
-//        dateFormat = new SimpleDateFormat("HH:mm:ss");
-//        canvas.drawText("Time: "+dateFormat.format(date),pagewidth-500,690,paint);
-//
-//        paint.setStyle(Paint.Style.STROKE);
-//        paint.setStrokeWidth(2);
-//        canvas.drawRect(20,780,pagewidth-250,860,paint);
-//
-//        paint.setTextAlign(Paint.Align.LEFT);
-//        paint.setStyle(Paint.Style.FILL);
-//        canvas.drawText("No.",40,830,paint);
-//        canvas.drawText("Form Name",200,830,paint);
-//        canvas.drawText("Sheet Qty",700,830,paint);
-//        canvas.drawText("Cost(RM)",900,830,paint);
-//        canvas.drawLine(180,790,180,840,paint);
-//        canvas.drawLine(680,790,680,840,paint);
-//        canvas.drawLine(880,790,880,840,paint);
-//
-//        if(reportsAdapter!=null){
-//            n=950;
-//
-//            for(int i=0;i<form.size();i++){
-//                paint.setTextAlign(Paint.Align.LEFT);
-//                canvas.drawText(String.valueOf(i + 1), 40, n, paint);
-//                canvas.drawText(form.get(i).getFormName(), 200, n, paint);
-//                canvas.drawText(form.get(i).getSheets(), 700, n, paint);
-//                paint.setTextAlign(Paint.Align.RIGHT);
-//                canvas.drawText(String.valueOf(form.get(i).getCost()), 1150, n, paint);
-//                n+=100;
-//            }
-//
-//
-//        }else {
-//            titlePaint.setTextAlign(Paint.Align.LEFT);
-//            titlePaint.setTextSize(35f);
-//            titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.ITALIC));
-//            canvas.drawText("No data for this semester", 200, 950, titlePaint);
-//        }
-//
-//        int j = 950+(100*(form.size()+1));
-//        paint.setColor(Color.rgb(247,147,30));
-//        canvas.drawRect(680,j-50,pagewidth-250,j+50,paint);
-//        paint.setColor(Color.BLACK);
-//        paint.setTextSize(50f);
-//        paint.setTextAlign(Paint.Align.LEFT);
-//        canvas.drawText("Total",700,j,paint);
-//        paint.setTextAlign(Paint.Align.RIGHT);
-//        canvas.drawText("RM " + getArrayList(),pagewidth-300,j,paint);
-//
-//
-//        pdfDocument.finishPage(page);
-//
+    private void getLog(){
+        ArrayList<String> logList;
+        logList = new ArrayList<>();
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+        user_history.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    for (DataSnapshot snapchild : snapshot.getChildren()){
+                        logList.add(snapchild.child("date").getValue().toString());
+                        History history = snapchild.getValue(History.class);
+                        DetectionLogActivity.this.historyList.add(history);
+                    }
+                }
+//                System.out.println("loglist2-: " + logList);
+                createPDF(DetectionLogActivity.this.historyList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    private void createPDF(List<History> logList) {
+        int pagewidth = 1440;
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+        PdfDocument pdfDocument = new PdfDocument();
+
+        File output = null;
+
+        int n;
+        File outputDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), "PDF");
+        if(!outputDir.exists()){
+            outputDir.mkdirs();
+        }
+
+        Paint paint = new Paint();
+        Paint titlePaint = new Paint();
+
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(1200,2010,1).create();
+        PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        titlePaint.setTextAlign(Paint.Align.CENTER);
+        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.BOLD));
+        titlePaint.setTextSize(70);
+        canvas.drawText("Detection History Log", (pagewidth/2)-90, 170,titlePaint);
+
+        String name = mPreferences.getString("name", "");
+        String email = mPreferences.getString("email", "");
+
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTextSize(35f);
+        paint.setColor(Color.BLACK);
+        canvas.drawText("Student Name:   "+ name,20,290,paint);
+        canvas.drawText("Student Email:    "+ email,20,335,paint);
+
+
+        titlePaint.setTextAlign(Paint.Align.CENTER);
+        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.ITALIC));
+        titlePaint.setTextSize(50);
+
+
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTextSize(35f);
+        paint.setColor(Color.BLACK);
+        //canvas.drawText("Staff Name: "+ name,20,640,paint);
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        canvas.drawRect(20,380,pagewidth-250,460,paint);
+
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawText("No.",50,430,paint);
+        canvas.drawText("Date Time",200,430,paint);
+        canvas.drawText("Risk",700,430,paint);
+        canvas.drawText("Distance",950,430,paint);
+        canvas.drawLine(180,390,180,440,paint);
+        canvas.drawLine(680,390,680,440,paint);
+        canvas.drawLine(930,390,930,440,paint);
+
+
+
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTextSize(35f);
+        paint.setColor(Color.BLACK);
+        n=530;
+
+        for(int i=0;i<logList.size();i++){
+            if(logList.get(i).getRisk().equals("High"))
+            {
+                paint.setColor(Color.parseColor("#D60F0F"));
+            }
+            else if(logList.get(i).getRisk().equals("Medium")){
+                paint.setColor(Color.parseColor("#C68517"));
+            }
+            else{
+                paint.setColor(Color.parseColor("#49814B"));
+            }
+            canvas.drawText(String.valueOf(i + 1), 50, n, paint);
+            canvas.drawText(logList.get(i).getDate() +" " +logList.get(i).getTime(), 200, n, paint);
+            canvas.drawText(logList.get(i).getRisk(), 700, n, paint);
+//            paint.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText(String.format("%.2f",logList.get(i).getDistance()), 960, n, paint);
+
+
+            n+=80;
+        }
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        canvas.drawRect(20,460,pagewidth-250,n-25,paint);
+
+        pdfDocument.finishPage(page);
+
+        long ct = System.currentTimeMillis();
+
+
 //        Random rand = new Random();
-//        output = new File(Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_DOWNLOADS), "PDF"+"/Report"+rand.nextInt()+".pdf");
-//        try{
-//            FileOutputStream out = new FileOutputStream(output);
-//            pdfDocument.writeTo(out);
-//            out.flush();
-//            out.close();
-//            System.out.println("path: " + output);
-//            Toast.makeText(getApplicationContext(), "Report pdf is downloaded", Toast.LENGTH_SHORT).show();
-//        }catch(IOException e){
-//            e.printStackTrace();
-//            Toast.makeText(getApplicationContext(), "PDF not downloaded", Toast.LENGTH_SHORT).show();
-//        }
-//        pdfDocument.close();
+        output = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), "PDF"+"/Report"+ct+".pdf");
+        try{
+            FileOutputStream out = new FileOutputStream(output);
+            pdfDocument.writeTo(out);
+            out.flush();
+            out.close();
+            System.out.println("path: " + output);
+            Toast.makeText(getApplicationContext(), "Report pdf is downloaded", Toast.LENGTH_SHORT).show();
+            openPdf(output);
+        }catch(IOException e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "PDF not downloaded", Toast.LENGTH_SHORT).show();
+        }
+        pdfDocument.close();
+    }
+
+    private void openPdf(File output) {
+        if (output.exists()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
+                    BuildConfig.APPLICATION_ID + ".provider", output);
+            intent.setDataAndType(uri, "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, "No Application for pdf view", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+//    private ArrayList<User> getCurrentUser(){
+//        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+//        DatabaseReference mDb = mDatabase.getReference();
+//        String userKey = Common.loggedUser.getUid();
+//
+//        mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+////                String uName = dataSnapshot.child("name").getValue(String.class);
+////                String uEmail = dataSnapshot.child("email").getValue(String.class);
+//
+//                User user = dataSnapshot.getValue(User.class);
+//                DetectionLogActivity.this.userArr.add(user);
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {}
+//        });
+//        return userArr;
+//
 //    }
+
+
+
+//    private void downloadLogPDF(){
+//        new CreatePdf(this)
+//                .setPdfName("SDAS_History_Log")
+//                .openPrintDialog(openPrintDialog)
+//                .setContentBaseUrl(null)
+//                .setPageSize(PrintAttributes.MediaSize.ISO_A4)
+//                .setContent("Content")
+////                .setContent(getString(R.string.content))
+//                .setFilePath(this.getExternalFilesDir(null).getAbsolutePath() + "/SDAS_PDF")
+//                .setCallbackListener(new CreatePdf.PdfCallbackListener() {
+//                    @Override
+//                    public void onFailure(String s) {
+//                        Toast.makeText(getApplicationContext(), "PDF Convert Fail", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(String s) {
+//                        Toast.makeText(getApplicationContext(), "PDF Convert Success", Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//                .create();
+//    }
+
+
+
 }
