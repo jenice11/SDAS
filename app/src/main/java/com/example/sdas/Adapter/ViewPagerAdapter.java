@@ -1,4 +1,4 @@
-package com.example.sdas.ViewHolder;
+package com.example.sdas.Adapter;
 
 import android.content.Context;
 
@@ -6,9 +6,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.sdas.Interface.DailyFragment;
-import com.example.sdas.Interface.OverallFragment;
-import com.example.sdas.Interface.WeeklyFragment;
+import com.example.sdas.Fragment.DailyFragment;
+import com.example.sdas.Fragment.OverallFragment;
+import com.example.sdas.Fragment.WeeklyFragment;
 
 
 import java.util.ArrayList;

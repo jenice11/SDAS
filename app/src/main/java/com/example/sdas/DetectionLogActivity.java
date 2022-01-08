@@ -31,9 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sdas.Model.History;
-import com.example.sdas.Model.User;
 import com.example.sdas.Utils.Common;
-import com.example.sdas.ViewHolder.HistoryAdapter;
+import com.example.sdas.Adapter.HistoryAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +41,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.uttampanchasara.pdfgenerator.CreatePdf;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,7 +48,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import io.paperdb.Paper;
 
@@ -241,7 +238,7 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
         int n;
         File outputDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS), "PDF");
+                Environment.DIRECTORY_DOWNLOADS), "SDAS_LOG");
         if(!outputDir.exists()){
             outputDir.mkdirs();
         }

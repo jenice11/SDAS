@@ -2,40 +2,43 @@ package com.example.sdas.Service;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
-import com.esotericsoftware.kryo.NotNull;
 import com.example.sdas.Model.History;
 import com.example.sdas.Model.MyLocation;
+import com.example.sdas.R;
 import com.example.sdas.Utils.Common;
 import com.google.android.gms.location.LocationResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-
-import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Random;
 
 import io.paperdb.Paper;
 
@@ -45,6 +48,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
     String uid;
     DatabaseReference trackingUserLocation;
     List<MyLocation> locationList = new ArrayList<>();
+    List<MyLocation> locationList2 = new ArrayList<>();
+
     Double distance;
     DatabaseReference history = FirebaseDatabase.getInstance().getReference(Common.HISTORY);
     String key;
@@ -87,7 +92,22 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         publicLocation.child(uid).setValue(location);
                     }
                     Log.d(TAG, "New update "+location);
-                    getDistance();
+                    getDistance(context);
+
+//                    Intent intent2service = new Intent(context,TrackingService.class);
+//                    Bundle args = new Bundle();
+//                    args.putSerializable("ARRAYLIST",(Serializable)locationList);
+//                    intent.putExtra("BUNDLE",args);
+//
+//                    Bundle extra = new Bundle();
+//                    extra.putSerializable("objects", (Serializable) locationList);
+//
+//                    System.out.println("PLACEHOLDER - locationlist 1" + locationList);
+//
+//
+//                    Intent intent2serv = new Intent(context,TrackingService.class);
+//                    intent2serv.putExtra("extra", extra);
+//                    context.startService(intent2serv);
                 }
             }
         }
@@ -95,9 +115,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
 
     //start comment
-    public void getDistance(){
-//        System.out.println("How many times it fking loop bitch");
-
+    public List<MyLocation> getDistance(Context context){
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
 //        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         trackingUserLocation.orderByKey()
@@ -116,10 +134,12 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                 Log.d(TAG, "USER ID KEY: " + key);
 
                                 MyLocation location = postSnapshot.getValue(MyLocation.class);
-                                locationList.add(location);
+                                MyLocationReceiver.this.locationList.add(location);
                             }
 //                            Log.d("LIST", String.valueOf(locationList));
-                            insertHistory(locationList);
+                            insertHistory(MyLocationReceiver.this.locationList, context);
+                            System.out.println("PLACEHOLDER - locationlist 2" + locationList);
+
                         }
                     }
 
@@ -128,9 +148,10 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         trackingUserLocation.removeEventListener(this);
                     }
                 });
+        return this.locationList;
     }
 
-    private void insertHistory(final List<MyLocation> locationList) {
+    private void insertHistory(final List<MyLocation> locationList, Context context) {
         trackingUserLocation.child(Common.loggedUser.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -207,6 +228,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                             System.out.println("11Shared current time = " + ct);
 
                                             listhistory.setValue(history);
+
+                                            notification(distance,context);
                                         }
                                     }
                                 }
@@ -231,6 +254,53 @@ public class MyLocationReceiver extends BroadcastReceiver {
         return results[0];
     }
 
+    private void notification(double distance, Context context) {
+        Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        AudioAttributes att = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build();
+
+        Intent intent = new Intent(context, MyLocationReceiver.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        String stringdouble= String.format("%.2f", distance);
+
+        String risk = "zero";
+        if(distance<=0.5 && distance >=0){ risk = "HIGH"; }
+        if(distance<=1.0 && distance >=0.5){ risk = "MEDIUM"; }
+        if(distance<=1.5 && distance >=1.0){ risk = "LOW"; }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel("channel_id", "Test Notification Channel",
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setDescription("Nearby device detected");
+            notificationChannel.setSound(ringtoneUri,att);
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_id")
+                .setContentTitle("Device Nearby in " + stringdouble + "m ")
+//                .setContentText("Please perform social distancing ")
+                .setSound(ringtoneUri)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("You are at " + risk + " risk"+
+                                "\nPlease perform social distancing"))
+                .setSmallIcon(R.drawable.ic_baseline_notification_important_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_notification_important_24dp))
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        int id= new Random(System.currentTimeMillis()).nextInt(1000);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+        managerCompat.notify(id, builder.build());
+    }
 }
 
 

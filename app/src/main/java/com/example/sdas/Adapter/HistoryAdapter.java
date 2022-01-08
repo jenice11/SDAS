@@ -1,9 +1,6 @@
-package com.example.sdas.ViewHolder;
-
-import static android.content.ContentValues.TAG;
+package com.example.sdas.Adapter;
 
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

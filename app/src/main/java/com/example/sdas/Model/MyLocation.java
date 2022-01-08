@@ -1,5 +1,6 @@
 package com.example.sdas.Model;
 
+
 public class MyLocation {
     private int accuracy,altitude,bearing,bearingAccuracyDegrees,speed,speedAccuracyMetersPerSecond,VerticalAccuracyMeters;
     private boolean complete,fromMockProvider;

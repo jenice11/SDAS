@@ -1,10 +1,9 @@
 package com.example.sdas;
 
-import com.example.sdas.ViewHolder.ViewPagerAdapter;
+import com.example.sdas.Adapter.ViewPagerAdapter;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
