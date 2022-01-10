@@ -217,6 +217,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         Paper.init(this);
 
+        Boolean alreadyExecuted=false;
+        if(!alreadyExecuted) {
+            putDouble(mEditor,"dist", 0.0);
+            mEditor.apply();
+            alreadyExecuted = true;
+        }
+
+
+
 //        FirebaseMessaging.getInstance().getToken()
 //                .addOnCompleteListener(new OnCompleteListener<String>() {
 //                    @Override
@@ -348,8 +357,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren())
                 {
-                    System.out.println("Weekly List: " + snap);
-
                     for (DataSnapshot snapchild : snap.getChildren()){
                         if(snapchild.getKey().equals("risk"))
                         {
@@ -365,7 +372,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     riskMediumCountDaily.setText(String.format("%d",countMedium));
                     riskLowCountDaily.setText(String.format("%d",countLow));
                 }
-                System.out.println("COUNT list: " + list);
+//                System.out.println("COUNT list: " + list);
 
                 list.clear();
             }
@@ -427,6 +434,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
 //        Toast.makeText(getApplicationContext(), "BroadCast Receiver Killed", Toast.LENGTH_LONG).show();
+    }
+
+    SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
+        return edit.putLong(key, Double.doubleToRawLongBits(value));
     }
 
 

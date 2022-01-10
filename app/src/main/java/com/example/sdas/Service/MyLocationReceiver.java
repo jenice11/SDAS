@@ -77,7 +77,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         mEditor = mPreferences.edit();
 
-
         if(intent != null)
         {
             final String action = intent.getAction();
@@ -91,9 +90,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
                     {
                         publicLocation.child(Common.loggedUser.getUid()).setValue(location);
                         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
-
-
-
 
 //                        user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
 //                        user_information.child(Common.loggedUser.getUid()).child("trackStatus").setValue("true");
@@ -111,151 +107,97 @@ public class MyLocationReceiver extends BroadcastReceiver {
 //                    Double currentUserLongA = getDouble(mPreferences,"longA", 0);
 //
 //                    System.out.println("Shared Pref - Current Location 1 = LatA: " + currentUserLatA + "  LongA: " + currentUserLongA);
-//
-                    getDistance(context);
-
-//                    Intent intent2service = new Intent(context,TrackingService.class);
-//                    Bundle args = new Bundle();
-//                    args.putSerializable("ARRAYLIST",(Serializable)locationList);
-//                    intent.putExtra("BUNDLE",args);
-//
-//                    Bundle extra = new Bundle();
-//                    extra.putSerializable("objects", (Serializable) locationList);
-//
-//                    System.out.println("PLACEHOLDER - locationlist 1" + locationList);
-//
-//
-//                    Intent intent2serv = new Intent(context,TrackingService.class);
-//                    intent2serv.putExtra("extra", extra);
-//                    context.startService(intent2serv);
+                    detectUser(context);
                 }
             }
         }
     }
 
+    public void detectUser(Context context){
+        String userKey = Common.loggedUser.getUid();
 
-    //start comment
-    public void getDistance(Context context){
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-//        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         trackingUserLocation.orderByKey()
                 //.equalTo(firebaseUser.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-                    double LogLatA, LogLonA, LogLatB, LogLonB;
-                    String LogDate, LogTime;
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists())
                         {
-//                            Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
                             for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                                 key = postSnapshot.getKey();
-//                                userList.add(key);
                                 Log.d(TAG, "USER ID KEY: " + key);
+                                Log.d(TAG, "USER ID CURRENT: " + userKey);
 
-                                MyLocation location = postSnapshot.getValue(MyLocation.class);
-                                MyLocationReceiver.this.locationList.add(location);
-                            }
-//                            Log.d("LIST", String.valueOf(locationList));
-                            insertHistory(MyLocationReceiver.this.locationList, context);
-//                            System.out.println("PLACEHOLDER - locationlist 2" + locationList);
+                                Double currentUserLatA = getDouble(mPreferences,"latA", 0);
+                                Double currentUserLongA = getDouble(mPreferences,"longA", 0);
 
-                        }
-                    }
+                                double latitudeB, longitudeB;
+                                boolean trackStat = (boolean) postSnapshot.child("trackStatus").getValue();
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        trackingUserLocation.removeEventListener(this);
-                    }
-                });
-    }
-
-    private void insertHistory(final List<MyLocation> locationList, Context context) {
-        trackingUserLocation.child(Common.loggedUser.getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        String abc = snapshot.getKey();
-//
-//                        Log.d("what key===", abc);
-                        MyLocation currentlocation = snapshot.getValue(MyLocation.class);
-
-                        double latA = (double) currentlocation.getLatitude();
-                        double longA = (double) currentlocation.getLongitude();
-
-                        Double currentUserLatA = getDouble(mPreferences,"latA", 0);
-                        Double currentUserLongA = getDouble(mPreferences,"longA", 0);
-
-                        System.out.println("Current Location - Preferences - Lat A =      " + currentUserLatA);
-                        System.out.println("Current Location - Preferences - Long A =      " + currentUserLongA);
-
-//                        System.out.println("A lat  " + latA + "A long "+ longA);
-
-                        double latitudeB=0, longitudeB=0, x = 0, y = 0;
-
-                        if(locationList != null && locationList.size()!=0)
-                        {
-                            for(MyLocation location: locationList) {
-                                if(location.isTrackStatus()==true)
+                                if(trackStat==true)
                                 {
-                                    Log.d("LIST", String.valueOf(location.getLatitude()) + ", " + String.valueOf(location.getLongitude()));
-                                    if(latA == location.getLatitude() && longA ==location.getLongitude())
+                                    Log.d("LIST", String.valueOf(postSnapshot.child("latitude").getValue())
+                                            + ", " + String.valueOf(postSnapshot.child("longitude").getValue()));
+
+                                    if(key.equals(userKey))
                                     {
-                                        System.out.println("Coordinate A same user - lat  " + latA + "long "+ longA);
+                                        System.out.println("Coordinate A same user - lat  " + currentUserLatA + "long "+ currentUserLongA);
                                     }
                                     else{
-                                        latitudeB = Double.valueOf(location.getLatitude());
-                                        longitudeB = Double.valueOf(location.getLongitude());
+                                        latitudeB = (double) postSnapshot.child("latitude").getValue();
+                                        longitudeB = (double) postSnapshot.child("longitude").getValue();
 
-                                        x = Double.valueOf(location.getLatitude());
-                                        y = Double.valueOf(location.getLongitude());
-
-//
-//                                        System.out.println("B lat  " + latitudeB + "B long "+ longitudeB);
-//                                        System.out.println("x lat  " + x + "x long "+ y);
-//
-//                                        Log.d(TAG, "<<4 == LatA= " + latA + "LongA= " + longA);
-//                                        Log.d(TAG, "<<4 == LatB= " + latitudeB + "LongB= " + longitudeB);
-
-                                        distance = calculateDistance(latA,longA, latitudeB, longitudeB);
+                                        distance = calculateDistance(currentUserLatA,currentUserLongA, latitudeB, longitudeB);
 
                                         Log.d(TAG, "<< Distance== " + distance + " >>");
 
-                                        DatabaseReference listhistory = history.child(Common.loggedUser.getUid()).push();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-                                        String date = sdf.format(Calendar.getInstance().getTime());
+                                        Double dist = getDouble(mPreferences,"dist", 0);
+                                        System.out.println("Shared prev distance = " + dist);
 
-                                        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                                        String time = stf.format(Calendar.getInstance().getTime());
-                                        String risk = "No Risk";
 
-                                        if(distance <= 1.5){
-                                            if(distance<=0.5 && distance >=0){ risk = "High"; }
-                                            if(distance<=1.0 && distance >=0.5){ risk = "Medium"; }
-                                            if(distance<=1.5 && distance >=1.0){ risk = "Low"; }
+                                        if(!(dist.equals(distance))){
+                                            DatabaseReference listhistory = history.child(Common.loggedUser.getUid()).push();
+                                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                                            String date = sdf.format(Calendar.getInstance().getTime());
 
-                                            History history = new History();
+                                            SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                            String time = stf.format(Calendar.getInstance().getTime());
+                                            String risk = "No Risk";
 
-                                            history.setDistance(distance);
-                                            history.setDate(date);
-                                            history.setTime(time);
-                                            history.setLatitudeA(latA);
-                                            history.setLongitudeA(longA);
-                                            history.setLatitudeB(latitudeB);
-                                            history.setLongitudeB(longitudeB);
-                                            history.setRisk(risk);
+                                            if(distance <= 1.5){
+                                                if(distance<=0.5 && distance >=0){ risk = "High"; }
+                                                if(distance<=1.0 && distance >=0.5){ risk = "Medium"; }
+                                                if(distance<=1.5 && distance >=1.0){ risk = "Low"; }
+
+                                                History history = new History();
+
+                                                history.setDistance(distance);
+                                                history.setDate(date);
+                                                history.setTime(time);
+                                                history.setLatitudeA(currentUserLatA);
+                                                history.setLongitudeA(currentUserLongA);
+                                                history.setLatitudeB(latitudeB);
+                                                history.setLongitudeB(longitudeB);
+                                                history.setRisk(risk);
 //                                            history.setTimestamp(history.getTimestampLong());
 
-                                            history.setTimestamp(ct);
+                                                history.setTimestamp(ct);
 
-                                            mEditor.putLong("currentTime", ct);
-                                            mEditor.commit();
+//                                                mEditor.putLong("currentTime", ct);
+                                                putDouble(mEditor,"dist", distance);
+                                                mEditor.apply();
 
-                                            System.out.println("11Shared current time = " + ct);
 
-                                            listhistory.setValue(history);
+//                                                Double dist = getDouble(mPreferences,"dist", 0);
+//                                                System.out.println("S distance 1= " + distance);
+//                                                System.out.println("S distance 2= " + dist);
 
-                                            notification(distance,context);
+                                                listhistory.setValue(history);
+                                                notification(distance,context);
+                                            }
+                                        }else{
+                                            System.out.println("Same distance as prev insert= " + distance);
                                         }
                                     }
                                 }
@@ -267,7 +209,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         }
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         trackingUserLocation.removeEventListener(this);
                     }
                 });
@@ -327,8 +269,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
         managerCompat.notify(id, builder.build());
     }
-
-
 }
 
 
