@@ -66,14 +66,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private TextView riskHighCountDaily, riskMediumCountDaily, riskLowCountDaily;
     List<String> list = new ArrayList<>();
 
-    TextView name, email, empid;
-    ImageView navprofile;
     private Button mTrackButton,mStopButton;
     DatabaseReference user_information;
 
     SharedPreferences mPreferences;
     SharedPreferences.Editor mEditor;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,15 +129,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user != null) {
-//            String name = user.getDisplayName();
-//            String email = user.getEmail();
-//
-//            userName.setText(name);
-//            userEmail.setText(email);
-//        }
 
         getDataforSummaryHistoryDaily();
 

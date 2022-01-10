@@ -55,10 +55,18 @@ public class MyLocationReceiver extends BroadcastReceiver {
     String key;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
+
     long ct = System.currentTimeMillis();
 
-
     DatabaseReference publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+
+    SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
+        return edit.putLong(key, Double.doubleToRawLongBits(value));
+    }
+
+    double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
+        return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -84,6 +92,9 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         publicLocation.child(Common.loggedUser.getUid()).setValue(location);
                         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
 
+
+
+
 //                        user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
 //                        user_information.child(Common.loggedUser.getUid()).child("trackStatus").setValue("true");
                     }
@@ -92,6 +103,15 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         publicLocation.child(uid).setValue(location);
                     }
                     Log.d(TAG, "New update "+location);
+
+                    putDouble(mEditor,"latA", location.getLatitude());
+                    putDouble(mEditor,"longA", location.getLongitude());
+
+//                    Double currentUserLatA = getDouble(mPreferences,"latA", 0);
+//                    Double currentUserLongA = getDouble(mPreferences,"longA", 0);
+//
+//                    System.out.println("Shared Pref - Current Location 1 = LatA: " + currentUserLatA + "  LongA: " + currentUserLongA);
+//
                     getDistance(context);
 
 //                    Intent intent2service = new Intent(context,TrackingService.class);
@@ -115,7 +135,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
 
     //start comment
-    public List<MyLocation> getDistance(Context context){
+    public void getDistance(Context context){
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
 //        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         trackingUserLocation.orderByKey()
@@ -138,7 +158,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                             }
 //                            Log.d("LIST", String.valueOf(locationList));
                             insertHistory(MyLocationReceiver.this.locationList, context);
-                            System.out.println("PLACEHOLDER - locationlist 2" + locationList);
+//                            System.out.println("PLACEHOLDER - locationlist 2" + locationList);
 
                         }
                     }
@@ -148,7 +168,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         trackingUserLocation.removeEventListener(this);
                     }
                 });
-        return this.locationList;
     }
 
     private void insertHistory(final List<MyLocation> locationList, Context context) {
@@ -163,7 +182,13 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                         double latA = (double) currentlocation.getLatitude();
                         double longA = (double) currentlocation.getLongitude();
-//                        System.out.println("PLACEHOLDER");
+
+                        Double currentUserLatA = getDouble(mPreferences,"latA", 0);
+                        Double currentUserLongA = getDouble(mPreferences,"longA", 0);
+
+                        System.out.println("Current Location - Preferences - Lat A =      " + currentUserLatA);
+                        System.out.println("Current Location - Preferences - Long A =      " + currentUserLongA);
+
 //                        System.out.println("A lat  " + latA + "A long "+ longA);
 
                         double latitudeB=0, longitudeB=0, x = 0, y = 0;
@@ -176,7 +201,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                     Log.d("LIST", String.valueOf(location.getLatitude()) + ", " + String.valueOf(location.getLongitude()));
                                     if(latA == location.getLatitude() && longA ==location.getLongitude())
                                     {
-//                                        System.out.println("Coordinate A same user - lat  " + latA + "long "+ longA);
+                                        System.out.println("Coordinate A same user - lat  " + latA + "long "+ longA);
                                     }
                                     else{
                                         latitudeB = Double.valueOf(location.getLatitude());
@@ -184,6 +209,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                         x = Double.valueOf(location.getLatitude());
                                         y = Double.valueOf(location.getLongitude());
+
 //
 //                                        System.out.println("B lat  " + latitudeB + "B long "+ longitudeB);
 //                                        System.out.println("x lat  " + x + "x long "+ y);
@@ -301,6 +327,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
         managerCompat.notify(id, builder.build());
     }
+
+
 }
 
 
