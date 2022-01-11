@@ -102,8 +102,6 @@ public class DailyFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_daily, container, false);
     }
 
-
-
     private void getDataforSummaryHistoryDaily() {
         long todayStart, todayEnd;
 
@@ -156,8 +154,9 @@ public class DailyFragment extends Fragment {
         int high = 3;
         int medium = 2;
         int low = 1;
-        int scorePositive,scoreNegative,overallScore;
+        int scorePositive,scoreNegative=0,overallScore;
         String comment = null;
+
 
         scorePositive = 100;
         scoreNegative = (countHigh * high) + (countMedium * medium) + (countLow * low);

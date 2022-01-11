@@ -328,7 +328,7 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
 //        Random rand = new Random();
         output = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS), "PDF"+"/Report"+ct+".pdf");
+                Environment.DIRECTORY_DOWNLOADS), "SDAS_LOG"+"/Report"+ct+".pdf");
         try{
             FileOutputStream out = new FileOutputStream(output);
             pdfDocument.writeTo(out);
@@ -359,55 +359,7 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             }
         }
     }
-
-//    private ArrayList<User> getCurrentUser(){
-//        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-//        DatabaseReference mDb = mDatabase.getReference();
-//        String userKey = Common.loggedUser.getUid();
-//
-//        mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-////                String uName = dataSnapshot.child("name").getValue(String.class);
-////                String uEmail = dataSnapshot.child("email").getValue(String.class);
-//
-//                User user = dataSnapshot.getValue(User.class);
-//                DetectionLogActivity.this.userArr.add(user);
-//
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {}
-//        });
-//        return userArr;
-//
-//    }
-
-
-
-//    private void downloadLogPDF(){
-//        new CreatePdf(this)
-//                .setPdfName("SDAS_History_Log")
-//                .openPrintDialog(openPrintDialog)
-//                .setContentBaseUrl(null)
-//                .setPageSize(PrintAttributes.MediaSize.ISO_A4)
-//                .setContent("Content")
-////                .setContent(getString(R.string.content))
-//                .setFilePath(this.getExternalFilesDir(null).getAbsolutePath() + "/SDAS_PDF")
-//                .setCallbackListener(new CreatePdf.PdfCallbackListener() {
-//                    @Override
-//                    public void onFailure(String s) {
-//                        Toast.makeText(getApplicationContext(), "PDF Convert Fail", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(String s) {
-//                        Toast.makeText(getApplicationContext(), "PDF Convert Success", Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-//                .create();
-//    }
+    
 
 
 

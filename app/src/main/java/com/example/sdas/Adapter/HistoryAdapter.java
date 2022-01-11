@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sdas.Model.History;
@@ -45,14 +46,15 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
 
         holder.risk.setText(model.getRisk());
         if(model.getRisk().equals("High"))
-            holder.risk.setTextColor(Color.parseColor("#D60F0F"));
+            holder.background.setBackgroundColor(Color.parseColor("#FCD9D9"));
+//            holder.risk.setTextColor(Color.parseColor("#D60F0F"));
+
         else if(model.getRisk().equals("Medium"))
-            holder.risk.setTextColor(Color.parseColor("#FFA000"));
+            holder.background.setBackgroundColor(Color.parseColor("#FFF0D6"));
+//            holder.risk.setTextColor(Color.parseColor("#FFA000"));
         else
-            holder.risk.setTextColor(Color.parseColor("#43A047"));
-
-
-
+            holder.background.setBackgroundColor(Color.parseColor("#E9FCEA"));
+//            holder.risk.setTextColor(Color.parseColor("#43A047"));
     }
 
     // Function to tell the class about the Card view
@@ -73,6 +75,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
     class HistoryViewholder
             extends RecyclerView.ViewHolder {
         TextView date, time, distance, risk;
+        ConstraintLayout background;
         public HistoryViewholder(@NonNull View itemView)
         {
             super(itemView);
@@ -81,10 +84,12 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
             time = itemView.findViewById(R.id.tvTime);
             distance = itemView.findViewById(R.id.tvDistance);
             risk = itemView.findViewById(R.id.tvRisk);
+            background = itemView.findViewById(R.id.clayout);
 //            Log.d(TAG, "<< Setting data to itemview >>");
 
         }
     }
+
 
 //    @Override
 //    public History getItem(int position) {

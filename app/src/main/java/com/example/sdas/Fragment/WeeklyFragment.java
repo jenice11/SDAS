@@ -155,7 +155,7 @@ public class WeeklyFragment extends Fragment {
         int high = 3;
         int medium = 2;
         int low = 1;
-        int scorePositive,scoreNegative,overallScore;
+        int scorePositive,scoreNegative=0,overallScore;
         String comment = null;
 
         scorePositive = 100;
