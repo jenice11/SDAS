@@ -13,10 +13,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +53,7 @@ import java.util.Objects;
 
 import io.paperdb.Paper;
 
-public class DetectionLogActivity extends AppCompatActivity implements View.OnClickListener {
+public class DetectionLogActivity extends AppCompatActivity implements View.OnClickListener{
 
     //Header & Navigation Menu
     DrawerLayout mDrawerLayout;
@@ -76,6 +78,8 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
     SharedPreferences mPreferences;
     SharedPreferences.Editor mEditor;
+
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -359,8 +363,34 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             }
         }
     }
-    
 
 
+//    @Override
+//    public boolean onQueryTextSubmit(String query) {
+//        // This method can be used when a query is submitted eg. creating search history using SQLite DB
+//
+//        Toast.makeText(this, "Query Inserted", Toast.LENGTH_SHORT).show();
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onQueryTextChange(String newText) {
+//        adapter.filter(newText);
+//        return true;
+//    }
 
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.search_menu, menu);
+//
+//        MenuItem searchItem = menu.findItem(R.id.actionSearch);
+//
+//        SearchView searchView = (SearchView) searchItem.getActionView();
+//        searchView.setQueryHint("Search People");
+//        searchView.setOnQueryTextListener(this);
+//        searchView.setIconified(false);
+//
+//        return true;
+//    }
 }

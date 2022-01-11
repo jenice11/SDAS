@@ -34,6 +34,15 @@
         </androidx.appcompat.widget.Toolbar>
     </LinearLayout>
 
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp">-->
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp" />-->
+<!--    </LinearLayout>-->
+
     <RelativeLayout
         android:id="@+id/relativeViewP"
         android:layout_width="match_parent"
@@ -57,6 +66,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
             android:paddingBottom="75dp">
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_all_history"
