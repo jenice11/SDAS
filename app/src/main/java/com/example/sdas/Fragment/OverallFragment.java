@@ -103,25 +103,26 @@ public class OverallFragment extends Fragment {
         user_history.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snap : snapshot.getChildren())
-                {
-                    for (DataSnapshot snapchild : snap.getChildren()){
-                        if(snapchild.getKey().equals("risk"))
-                        {
-                            list.add(snapchild.getValue().toString());
-//                            System.out.println("COUNT getValue: " + snapchild.getValue().toString());
+                if(snapshot.exists()){
+                    for (DataSnapshot snap : snapshot.getChildren())
+                    {
+                        for (DataSnapshot snapchild : snap.getChildren()){
+                            if(snapchild.getKey().equals("risk"))
+                            {
+                                list.add(snapchild.getValue().toString());
+                            }
                         }
+                        int countHigh = Collections.frequency(list, "High");
+                        int countMedium = Collections.frequency(list, "Medium");
+                        int countLow = Collections.frequency(list, "Low");
+
+                        calculateScore(countHigh,countMedium,countLow);
                     }
-
-//                    System.out.println("COUNT list: " + list);
-
-                    int countHigh = Collections.frequency(list, "High");
-                    int countMedium = Collections.frequency(list, "Medium");
-                    int countLow = Collections.frequency(list, "Low");
-
-                    calculateScore(countHigh,countMedium,countLow);
+                }else{
+                    calculateScore(0,0,0);
                 }
-                System.out.println("COUNT list: " + list);
+
+//                System.out.println("COUNT list: " + list);
                 list.clear();
             }
 
@@ -164,8 +165,13 @@ public class OverallFragment extends Fragment {
             comment = "You are at high risk!";
         }
 
-        textViewScore.setText(String.valueOf(overallScore));
-        textViewComment.setText(comment);
+        if(overallScore == 100){
+            textViewScore.setText(String.valueOf(overallScore));
+            textViewComment.setText("No risk");
+        }else{
+            textViewScore.setText(String.valueOf(overallScore));
+            textViewComment.setText(comment);
+        }
 
         initPieChart();
         showPieChart(scorePositive,scoreNegative);

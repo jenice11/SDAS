@@ -5,10 +5,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sdas.R;
 import com.example.sdas.Utils.Common;
@@ -41,6 +43,7 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class DailyFragment extends Fragment {
+    private static final String TAG = "DailyFragment";
     TextView textViewScore,textViewComment;
     PieChart pieChart;
     DatabaseReference user_history;
@@ -121,25 +124,24 @@ public class DailyFragment extends Fragment {
         user_history.orderByChild("timestamp").startAt(todayStart).endAt(todayEnd).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snap : snapshot.getChildren())
-                {
-                    System.out.println("Weekly List: " + snap);
-
-                    for (DataSnapshot snapchild : snap.getChildren()){
-                        if(snapchild.getKey().equals("risk"))
-                        {
-                            list.add(snapchild.getValue().toString());
+                if(snapshot.exists()){
+                    for (DataSnapshot snap : snapshot.getChildren())
+                    {
+                        for (DataSnapshot snapchild : snap.getChildren()){
+                            if(snapchild.getKey().equals("risk"))
+                            {
+                                list.add(snapchild.getValue().toString());
+                            }
                         }
+                        int countHigh = Collections.frequency(list, "High");
+                        int countMedium = Collections.frequency(list, "Medium");
+                        int countLow = Collections.frequency(list, "Low");
+
+                        calculateScore(countHigh,countMedium,countLow);
                     }
-
-                    int countHigh = Collections.frequency(list, "High");
-                    int countMedium = Collections.frequency(list, "Medium");
-                    int countLow = Collections.frequency(list, "Low");
-
-                    calculateScore(countHigh,countMedium,countLow);
+                }else{
+                    calculateScore(0,0,0);
                 }
-                System.out.println("COUNT list: " + list);
-
                 list.clear();
             }
 
@@ -154,14 +156,11 @@ public class DailyFragment extends Fragment {
         int high = 3;
         int medium = 2;
         int low = 1;
-        int scorePositive,scoreNegative=0,overallScore;
+        int scorePositive,scoreNegative,overallScore;
         String comment = null;
-
 
         scorePositive = 100;
         scoreNegative = (countHigh * high) + (countMedium * medium) + (countLow * low);
-
-
         overallScore = scorePositive - scoreNegative;
 
         if(scoreNegative<=20)
@@ -183,8 +182,15 @@ public class DailyFragment extends Fragment {
             comment = "You are at high risk!";
         }
 
-        textViewScore.setText(String.valueOf(overallScore));
-        textViewComment.setText(comment);
+        if(overallScore == 100){
+            textViewScore.setText(String.valueOf(overallScore));
+            textViewComment.setText("No risk");
+        }else{
+            textViewScore.setText(String.valueOf(overallScore));
+            textViewComment.setText(comment);
+        }
+//        textViewScore.setText(String.valueOf(overallScore));
+//        textViewComment.setText(comment);
 
         initPieChart();
         showPieChart(scorePositive,scoreNegative);
@@ -194,14 +200,15 @@ public class DailyFragment extends Fragment {
 
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
         String label = "";
-
-        //initializing data
         Map<String, Integer> typeAmountMap = new HashMap<>();
+        ArrayList<Integer> colors = new ArrayList<>();
+
+
+
         typeAmountMap.put("Positive",scorePositive);
         typeAmountMap.put("Negative",scoreNegative);
 
         //initializing colors for the entries
-        ArrayList<Integer> colors = new ArrayList<>();
         colors.add(Color.parseColor("#DAF1FB"));
         colors.add(Color.parseColor("#3495BD"));
 

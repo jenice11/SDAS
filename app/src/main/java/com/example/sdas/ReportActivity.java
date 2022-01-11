@@ -214,7 +214,7 @@ public class ReportActivity extends AppCompatActivity {
                     riskMediumCount.setText(String.format("%d",countMedium));
                     riskLowCount.setText(String.format("%d",countLow));
                 }
-                System.out.println("COUNT list: " + list);
+//                System.out.println("COUNT list: " + list);
                 list.clear();
             }
 
@@ -246,7 +246,7 @@ public class ReportActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren())
                 {
-                    System.out.println("Weekly List: " + snap);
+//                    System.out.println("Weekly List: " + snap);
 
                     for (DataSnapshot snapchild : snap.getChildren()){
                         if(snapchild.getKey().equals("risk"))
@@ -263,7 +263,7 @@ public class ReportActivity extends AppCompatActivity {
                     riskMediumCountDaily.setText(String.format("%d",countMedium));
                     riskLowCountDaily.setText(String.format("%d",countLow));
                 }
-                System.out.println("COUNT list: " + list);
+//                System.out.println("COUNT list: " + list);
 
                 list.clear();
             }
@@ -299,7 +299,7 @@ public class ReportActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren())
                 {
-                    System.out.println("Weekly List: " + snap);
+//                    System.out.println("Weekly List: " + snap);
 
                     for (DataSnapshot snapchild : snap.getChildren()){
                         if(snapchild.getKey().equals("risk"))
@@ -317,7 +317,7 @@ public class ReportActivity extends AppCompatActivity {
                     riskMediumCountWeekly.setText(String.format("%d",countMedium));
                     riskLowCountWeekly.setText(String.format("%d",countLow));
                 }
-                System.out.println("COUNT list: " + list);
+//                System.out.println("COUNT list: " + list);
 
                 list.clear();
             }
