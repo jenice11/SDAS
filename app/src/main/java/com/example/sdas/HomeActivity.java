@@ -248,29 +248,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
         if(R.id.trackButton == v.getId()){
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                startForegroundService(new Intent(this, TrackingService.class));
-//                Toast.makeText(this, "Start tracking now Fore", Toast.LENGTH_SHORT).show();
-//            } else {
-
-//            Intent alarm = new Intent(this, AlarmReceiver.class);
-//            boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
-//            if(alarmRunning == false){
-//                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,alarm, 0);
-//                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//                alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 10000, pendingIntent);
-//            }
-
-
-
-//            Toast.makeText(this, "Pressed track button", Toast.LENGTH_SHORT).show();
-
-
             Intent ishintent = new Intent(this, TrackingService.class);
             PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
             AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pintent);
-
+//            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),1000, pintent);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pintent);
 //            startService(new Intent(this, TrackingService.class));
             startBroadCastReceiver();
             Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
@@ -289,10 +271,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
 
-
             stopService(new Intent(this, TrackingService.class));
             killBroadCastReceiver();
-
 
             Toast.makeText(this, "Tracking stopped", Toast.LENGTH_SHORT).show();
         }
@@ -312,6 +292,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
         publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+        killBroadCastReceiver();
+
         Log.d(TAG, "App Destroyed + firebase status false");
     }
     // Function to tell the app to start getting
@@ -334,9 +316,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         long todayStart, todayEnd;
 
         Calendar cal = Calendar.getInstance();
-//        cal.set(Calendar.HOUR_OF_DAY, 0);
-//        cal.set(Calendar.MINUTE, 0);
-//        cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.HOUR_OF_DAY, cal.getActualMinimum(Calendar.HOUR_OF_DAY));
         cal.set(Calendar.MINUTE, cal.getActualMinimum(Calendar.MINUTE));
         cal.set(Calendar.SECOND, cal.getActualMinimum(Calendar.SECOND));
@@ -382,42 +361,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-    }
-
-    private void getDataforSummaryHistory() {
-        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
-        user_history.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snap : snapshot.getChildren())
-                {
-                    for (DataSnapshot snapchild : snap.getChildren()){
-                        if(snapchild.getKey().equals("risk"))
-                        {
-                            list.add(snapchild.getValue().toString());
-                            System.out.println("COUNT getValue: " + snapchild.getValue().toString());
-                        }
-                    }
-
-                    System.out.println("COUNT list: " + list);
-
-                    int countHigh = Collections.frequency(list, "High");
-                    int countMedium = Collections.frequency(list, "Medium");
-                    int countLow = Collections.frequency(list, "Low");
-                    riskHighCountDaily.setText(String.format("%d",countHigh));
-                    riskMediumCountDaily.setText(String.format("%d",countMedium));
-                    riskLowCountDaily.setText(String.format("%d",countLow));
-                }
-                System.out.println("COUNT list: " + list);
-                list.clear();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
     }
 
     private void startBroadCastReceiver() {

@@ -57,10 +57,12 @@
         android:layout_marginEnd="8dp"
         android:background="@drawable/bg_txt_username"
         android:hint="Email"
+        android:singleLine="true"
         android:paddingLeft="60dp"
         android:textColor="@color/colorBlack"
         android:textSize="40px"
         android:textStyle="bold"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />

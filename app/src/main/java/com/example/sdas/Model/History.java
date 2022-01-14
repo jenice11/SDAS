@@ -13,6 +13,11 @@ public class History {
     private double distance;
     private double latitudeA, latitudeB, longitudeA,longitudeB;
     private Long timestamp;
+    private String userkey;
+
+
+
+
 
     public History() {
     }
@@ -80,6 +85,10 @@ public class History {
     public void setLongitudeB(double longitudeB) {
         this.longitudeB = longitudeB;
     }
+
+    public String getUserkey() { return userkey; }
+
+    public void setUserkey(String userkey) { this.userkey = userkey; }
 
     public java.util.Map<String, String> getTimestamp() {
         return ServerValue.TIMESTAMP;

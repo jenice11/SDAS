@@ -18,6 +18,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 
 public class TrackingService extends Service {
     private LocationRequest locationRequest;
@@ -40,77 +44,59 @@ public class TrackingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         // do your jobs here
-        updateLocation();
-        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+//        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+//        String time = stf.format(Calendar.getInstance().getTime());
+//
+//        System.out.println("Start service at , " + time);
+//        updateLocation();
+//        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
 
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startJob();
+            }
+        });
+        t.start();
 
-        //broken, timing not right, keep pinging everything
-        Long ct = mPreferences.getLong("currentTime", 0);
-
-
-        System.out.println("Shared current time = " + ct);
-
-        Intent intent4list=new Intent(this, TrackingService.class);
-//yList<Object> objects = (ArrayList<Object>) extra.getSerializable("objects");
-
-//        Bundle extra = intent4list.getBundleExtra("extra");
-//        Arra
-//        user_history.orderByChild("timestamp").startAt(ct)
-//        //under construction
-////        user_history.orderByChild("datetime").startAt(String.valueOf(currentDT))
-////        user_history.orderByChild("timestamp").startAt(String.valueOf(ServerValue.TIMESTAMP))
-//                .addChildEventListener(new ChildEventListener() {
-////        user_history.addChildEventListener(new ChildEventListener() {
-//            //        user_history.limitToLast(1).addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                double distance = snapshot.getValue(History.class).getDistance();
-//                notification(distance);
-////                System.out.println("Firebase timestamp = " + snapshot.getValue(History.class).getTimestampLong());
-//
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                user_history.removeEventListener(this);
-//            }
-//        });
 //        return START_STICKY;
 //        return super.onStartCommand(intent, flags, startId);
         return START_NOT_STICKY;
+    }
 
+    private void startJob(){
+        //do job here
+        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        String time = stf.format(Calendar.getInstance().getTime());
+
+        System.out.println("Start service at , " + time);
+        updateLocation();
+        user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
+
+        //job completed. Rest for 5 second before doing another one
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //do job again
+        startJob();
     }
 
     private void buildLocationRequest() {
         locationRequest = new LocationRequest();
         locationRequest.setSmallestDisplacement(0.1f);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void updateLocation() {
         buildLocationRequest();
-//        Log.d(TAG, "AT update location tracking service");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -128,9 +114,23 @@ public class TrackingService extends Service {
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(this, MyLocationReceiver.class);
         intent.setAction(MyLocationReceiver.ACTION);
+//        System.out.println("PI = " + intent);
+
+//        return PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         return PendingIntent.getBroadcast(this,111,intent,PendingIntent.FLAG_ONE_SHOT);
     }
+
+//    @Override
+//    public void onDestroy() {
+//        Intent intent = new Intent(this, MyLocationReceiver.class);
+//        intent.setAction(MyLocationReceiver.ACTION);
+//        System.out.println("PI = " + intent);
+//
+//        PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        System.out.println(" service stopped...");
+//    }
 
 //    private void notification(double distance) {
 //        Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

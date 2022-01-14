@@ -219,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Login failed, wrong credentials", Toast.LENGTH_SHORT).show();
                         } else {
                             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                            System.out.println("CURRENT USER UID: " + firebaseUser.getUid());
+//                            System.out.println("CURRENT USER UID: " + firebaseUser.getUid());
 
                             if (firebaseUser.isEmailVerified()){
                                 user_information.orderByKey()

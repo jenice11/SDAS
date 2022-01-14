@@ -48,10 +48,11 @@ public class MyLocationReceiver extends BroadcastReceiver {
     String uid;
     DatabaseReference trackingUserLocation;
     List<MyLocation> locationList = new ArrayList<>();
-    List<MyLocation> locationList2 = new ArrayList<>();
+    List<History> historyList = new ArrayList<>();
 
     Double distance;
     DatabaseReference history = FirebaseDatabase.getInstance().getReference(Common.HISTORY);
+    DatabaseReference user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
     String key;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -77,6 +78,9 @@ public class MyLocationReceiver extends BroadcastReceiver {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         mEditor = mPreferences.edit();
 
+        System.out.println("At mylocationreceiver");
+
+
         if(intent != null)
         {
             final String action = intent.getAction();
@@ -100,6 +104,9 @@ public class MyLocationReceiver extends BroadcastReceiver {
                     }
                     Log.d(TAG, "New update "+location);
 
+//                    System.out.println("Current Location 0 = LatA: " + location.getLatitude() + "  LongA: " + location.getLongitude());
+
+
                     putDouble(mEditor,"latA", location.getLatitude());
                     putDouble(mEditor,"longA", location.getLongitude());
 
@@ -107,14 +114,46 @@ public class MyLocationReceiver extends BroadcastReceiver {
 //                    Double currentUserLongA = getDouble(mPreferences,"longA", 0);
 //
 //                    System.out.println("Shared Pref - Current Location 1 = LatA: " + currentUserLatA + "  LongA: " + currentUserLongA);
-                    detectUser(context);
+                    mEditor.apply();
+
+                    getListHistory(context);
                 }
             }
         }
     }
 
-    public void detectUser(Context context){
+    public void getListHistory(Context context){
+        user_history.orderByChild("timestamp").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+//                        key = postSnapshot.getKey();
+//                        Log.d(TAG, "USER ID KEY: " + key);
+
+                        History history = postSnapshot.getValue(History.class);
+                        historyList.add(history);
+                    }
+                    insertHistory(historyList, context);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void insertHistory(List<History> hList, Context context){
         String userKey = Common.loggedUser.getUid();
+
+        Double currentUserLatA = getDouble(mPreferences,"latA", 0);
+        Double currentUserLongA = getDouble(mPreferences,"longA", 0);
+
+        System.out.println("Shared Pref - Current Location 2 = LatA: " + currentUserLatA + "  LongA: " + currentUserLongA);
+
 
         trackingUserLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
         trackingUserLocation.orderByKey()
@@ -126,11 +165,9 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         {
                             for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                                 key = postSnapshot.getKey();
-                                Log.d(TAG, "USER ID KEY: " + key);
-                                Log.d(TAG, "USER ID CURRENT: " + userKey);
+//                                Log.d(TAG, "USER ID KEY: " + key);
+//                                Log.d(TAG, "USER ID CURRENT: " + userKey);
 
-                                Double currentUserLatA = getDouble(mPreferences,"latA", 0);
-                                Double currentUserLongA = getDouble(mPreferences,"longA", 0);
 
                                 double latitudeB, longitudeB;
                                 boolean trackStat = (boolean) postSnapshot.child("trackStatus").getValue();
@@ -152,53 +189,159 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                         Log.d(TAG, "<< Distance== " + distance + " >>");
 
-                                        Double dist = getDouble(mPreferences,"dist", 0);
-                                        System.out.println("Shared prev distance = " + dist);
+                                        DatabaseReference listhistory = history.child(Common.loggedUser.getUid()).push();
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                                        String date = sdf.format(Calendar.getInstance().getTime());
+
+                                        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                        String time = stf.format(Calendar.getInstance().getTime());
+                                        String risk = "No Risk";
 
 
-                                        if(!(dist.equals(distance))){
-                                            DatabaseReference listhistory = history.child(Common.loggedUser.getUid()).push();
-                                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-                                            String date = sdf.format(Calendar.getInstance().getTime());
+//                                        Double dist = getDouble(mPreferences,"dist", 0);
+//                                        System.out.println("Shared prev distance = " + dist);
 
-                                            SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                                            String time = stf.format(Calendar.getInstance().getTime());
-                                            String risk = "No Risk";
+                                        long checktime, datatime;
 
-                                            if(distance <= 1.5){
-                                                if(distance<=0.5 && distance >=0){ risk = "High"; }
-                                                if(distance<=1.0 && distance >=0.5){ risk = "Medium"; }
-                                                if(distance<=1.5 && distance >=1.0){ risk = "Low"; }
+                                        Boolean alreadyExecuted=false;
 
-                                                History history = new History();
+                                        for(History historyLog: hList) {
+                                            datatime = historyLog.getTimestampLong();
+                                            checktime = ct - datatime;
+//                                            System.out.println("CT  = " + checktime);
 
-                                                history.setDistance(distance);
-                                                history.setDate(date);
-                                                history.setTime(time);
-                                                history.setLatitudeA(currentUserLatA);
-                                                history.setLongitudeA(currentUserLongA);
-                                                history.setLatitudeB(latitudeB);
-                                                history.setLongitudeB(longitudeB);
-                                                history.setRisk(risk);
-//                                            history.setTimestamp(history.getTimestampLong());
+//                                            System.out.println("CT Long = " + history.getTimestampLong());
+//                                            System.out.println("CT date = " + date + "====" +historyLog.getDate());
 
-                                                history.setTimestamp(ct);
+                                            if (distance <= 1.5) {
+                                                if (distance <= 0.5 && distance >= 0) {
+                                                    risk = "High";
+                                                }
+                                                if (distance <= 1.0 && distance >= 0.5) {
+                                                    risk = "Medium";
+                                                }
+                                                if (distance <= 1.5 && distance >= 1.0) {
+                                                    risk = "Low";
+                                                }
+                                                if (checktime <= 60000) {
+                                                    System.out.println("ct <<<< 60000");
+//                                                System.out.println("User key 1" + historyLog.getUserkey() + " =2= " + key);
+//                                                System.out.println("CT date = " + date + "====" +historyLog.getDate());
 
-//                                                mEditor.putLong("currentTime", ct);
-                                                putDouble(mEditor,"dist", distance);
-                                                mEditor.apply();
+                                                    if (historyLog.getUserkey().equals(key)) {
+//                                                    System.out.println("User key matched " + historyLog.getUserkey() + " == " + key);
+//                                                    System.out.println("Check time Yes == " + checktime + "Date == " + historyLog.getDate());
+
+                                                        Double dist1 = historyLog.getDistance();
+//                                                    System.out.println("Check distance" + dist1 + "--" + distance);
+
+                                                        if (!(dist1.equals(distance))) {
+                                                            System.out.println("distance not same");
+
+                                                            if (!alreadyExecuted) {
+                                                                    History history = new History();
+
+                                                                    history.setDistance(distance);
+                                                                    history.setDate(date);
+                                                                    history.setTime(time);
+                                                                    history.setLatitudeA(currentUserLatA);
+                                                                    history.setLongitudeA(currentUserLongA);
+                                                                    history.setLatitudeB(latitudeB);
+                                                                    history.setLongitudeB(longitudeB);
+                                                                    history.setRisk(risk);
+                                                                    history.setUserkey(key);
+                                                                    history.setTimestamp(ct);
+
+                                                                    listhistory.setValue(history);
+                                                                    notification(distance, context);
+                                                                    System.out.println("1 insert");
+
+                                                                alreadyExecuted = true;
+                                                                System.out.println("Same date more than 1min insert");
+                                                            }
+                                                        } else {
+                                                            System.out.println("distance same");
+                                                        }
+                                                    }
+                                                } else {
+//                                                System.out.println("ct >>> 60000");
+
+                                                    Double dist1 = historyLog.getDistance();
+                                                    System.out.println("Check distance" + dist1 + "--" + distance);
+
+                                                    if ((dist1.equals(distance))) {
+                                                        System.out.println("distance same");
+                                                    } else {
+                                                        System.out.println("distance not same");
+
+                                                            if (!alreadyExecuted) {
+                                                                History history = new History();
+
+                                                                history.setDistance(distance);
+                                                                history.setDate(date);
+                                                                history.setTime(time);
+                                                                history.setLatitudeA(currentUserLatA);
+                                                                history.setLongitudeA(currentUserLongA);
+                                                                history.setLatitudeB(latitudeB);
+                                                                history.setLongitudeB(longitudeB);
+                                                                history.setRisk(risk);
+                                                                history.setUserkey(key);
+                                                                history.setTimestamp(ct);
+
+                                                                listhistory.setValue(history);
+                                                                notification(distance, context);
+
+                                                                System.out.println("Diff insert");
 
 
-//                                                Double dist = getDouble(mPreferences,"dist", 0);
-//                                                System.out.println("S distance 1= " + distance);
-//                                                System.out.println("S distance 2= " + dist);
+                                                                alreadyExecuted = true;
+                                                            }
 
-                                                listhistory.setValue(history);
-                                                notification(distance,context);
+
+
+                                                    }
+//                                                System.out.println("already executed 2");
+                                                }
                                             }
-                                        }else{
-                                            System.out.println("Same distance as prev insert= " + distance);
                                         }
+
+
+//                                        if(!(dist.equals(distance))){
+//                                            if(distance <= 1.5){
+//                                                if(distance<=0.5 && distance >=0){ risk = "High"; }
+//                                                if(distance<=1.0 && distance >=0.5){ risk = "Medium"; }
+//                                                if(distance<=1.5 && distance >=1.0){ risk = "Low"; }
+//
+//                                                History history = new History();
+//
+//                                                history.setDistance(distance);
+//                                                history.setDate(date);
+//                                                history.setTime(time);
+//                                                history.setLatitudeA(currentUserLatA);
+//                                                history.setLongitudeA(currentUserLongA);
+//                                                history.setLatitudeB(latitudeB);
+//                                                history.setLongitudeB(longitudeB);
+//                                                history.setRisk(risk);
+//                                                history.setUserkey(key);
+////                                            history.setTimestamp(history.getTimestampLong());
+//
+//                                                history.setTimestamp(ct);
+//
+////                                                mEditor.putLong("currentTime", ct);
+////                                                putDouble(mEditor,"dist", distance);
+////                                                mEditor.commit();
+//
+//
+////                                                Double dist = getDouble(mPreferences,"dist", 0);
+////                                                System.out.println("S distance 1= " + distance);
+////                                                System.out.println("S distance 2= " + dist);
+//
+//                                                listhistory.setValue(history);
+//                                                notification(distance,context);
+//                                            }
+//                                        }else{
+//                                            System.out.println("Same distance as prev insert= " + distance);
+//                                        }
                                     }
                                 }
                                 else
