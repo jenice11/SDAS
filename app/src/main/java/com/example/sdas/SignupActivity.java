@@ -110,7 +110,7 @@ public class SignupActivity extends AppCompatActivity {
         boolean c1 = false,c2 = false, c3= false;
 
         if (TextUtils.isEmpty(name)) {
-            inputEmail.setError("Name is empty");
+            inputName.setError("Name is empty");
             return;
         }else{
             c1 = true;

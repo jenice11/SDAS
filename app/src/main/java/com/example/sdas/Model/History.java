@@ -15,10 +15,6 @@ public class History {
     private Long timestamp;
     private String userkey;
 
-
-
-
-
     public History() {
     }
 

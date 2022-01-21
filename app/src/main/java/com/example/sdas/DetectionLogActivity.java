@@ -183,6 +183,26 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mDb = mDatabase.getReference();
+        String userKey = Common.loggedUser.getUid();
+
+        mDb.child(Common.USER_INFORMATION).child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String uName = dataSnapshot.child("name").getValue(String.class);
+                String uEmail = dataSnapshot.child("email").getValue(String.class);
+
+                userName.setText(uName);
+                userEmail.setText(uEmail);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+
         Paper.init(this);
 
     }
@@ -219,7 +239,7 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
                     for (DataSnapshot snapchild : snapshot.getChildren()){
-                        logList.add(snapchild.child("date").getValue().toString());
+//                        logList.add(snapchild.child("date").getValue().toString());
                         History history = snapchild.getValue(History.class);
                         DetectionLogActivity.this.historyList.add(history);
                     }
@@ -262,6 +282,9 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         String name = mPreferences.getString("name", "");
         String email = mPreferences.getString("email", "");
 
+        System.out.println("SHARED 2: " + name + "/ " +email);
+
+
         paint.setTextAlign(Paint.Align.LEFT);
         paint.setTextSize(35f);
         paint.setColor(Color.BLACK);
@@ -299,6 +322,16 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         paint.setTextSize(35f);
         paint.setColor(Color.BLACK);
         n=530;
+        List<History> logList2 = new ArrayList<>();
+        List<History> logList3 = new ArrayList<>();
+
+        boolean newpage1=false;
+        boolean newpage2=false;
+        boolean trigger=false;
+        boolean trigger2=false;
+
+
+        int i2 = 0, i3=0;
 
         for(int i=0;i<logList.size();i++){
             if(logList.get(i).getRisk().equals("High"))
@@ -318,7 +351,25 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             canvas.drawText(String.format("%.2f",logList.get(i).getDistance()), 960, n, paint);
 
 
+
             n+=80;
+
+            if(n>2130)
+            {
+//                System.out.println("Loglist: " + logList.get(i));
+//                System.out.println("Loglist i: " + i);
+
+                logList2.add(logList.get(i));
+
+                if(!trigger){
+                    i2 = i;
+                    trigger=true;
+                    System.out.println("Loglist: " + logList.get(i));
+
+                }
+                newpage1=true;
+            }
+
         }
 
         paint.setStyle(Paint.Style.STROKE);
@@ -326,6 +377,148 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         canvas.drawRect(20,460,pagewidth-250,n-25,paint);
 
         pdfDocument.finishPage(page);
+
+        if(newpage1){
+            PdfDocument.Page page2 = pdfDocument.startPage(pageInfo);
+            Canvas canvas2 = page2.getCanvas();
+
+            paint.setTextAlign(Paint.Align.LEFT);
+            paint.setTextSize(35f);
+            paint.setColor(Color.BLACK);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(2);
+            canvas2.drawRect(20,70,pagewidth-250,150,paint);
+
+            paint.setTextAlign(Paint.Align.LEFT);
+            paint.setStyle(Paint.Style.FILL);
+            canvas2.drawText("No.",50,120,paint);
+            canvas2.drawText("Date Time",200,120,paint);
+            canvas2.drawText("Risk",700,120,paint);
+            canvas2.drawText("Distance",950,120,paint);
+            canvas2.drawLine(180,80,180,130,paint);
+            canvas2.drawLine(680,80,680,130,paint);
+            canvas2.drawLine(930,80,930,130,paint);
+
+
+
+            paint.setTextAlign(Paint.Align.LEFT);
+            paint.setTextSize(35f);
+            paint.setColor(Color.BLACK);
+            n=220;
+
+            for(int i=0;i<logList2.size();i++){
+                if(logList2.get(i).getRisk().equals("High"))
+                {
+                    paint.setColor(Color.parseColor("#D60F0F"));
+                }
+                else if(logList2.get(i).getRisk().equals("Medium")){
+                    paint.setColor(Color.parseColor("#C68517"));
+                }
+                else{
+                    paint.setColor(Color.parseColor("#49814B"));
+                }
+                canvas2.drawText(String.valueOf(i2++), 50, n, paint);
+                canvas2.drawText(logList2.get(i).getDate() +" " +logList2.get(i).getTime(), 200, n, paint);
+                canvas2.drawText(logList2.get(i).getRisk(), 700, n, paint);
+                canvas2.drawText(String.format("%.2f",logList2.get(i).getDistance()), 960, n, paint);
+//
+                n+=80;
+
+                if(n>1980)
+                {
+                    System.out.println("Loglist i n i2: " + i + " / "+ i2);
+
+                    logList3.add(logList2.get(i));
+
+                    if(!trigger2){
+                        i3 = i2;
+                        trigger2=true;
+                        System.out.println("Loglist2: " + logList2.get(i));
+
+                    }
+                    newpage2=true;
+                }
+            }
+
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(2);
+            canvas2.drawRect(20,150,pagewidth-250,n-25,paint);
+
+            pdfDocument.finishPage(page2);
+        }
+
+        if(newpage2){
+            PdfDocument.Page page3 = pdfDocument.startPage(pageInfo);
+            Canvas canvas3 = page3.getCanvas();
+
+            paint.setTextAlign(Paint.Align.LEFT);
+            paint.setTextSize(35f);
+            paint.setColor(Color.BLACK);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(2);
+            canvas3.drawRect(20,70,pagewidth-250,150,paint);
+
+            paint.setTextAlign(Paint.Align.LEFT);
+            paint.setStyle(Paint.Style.FILL);
+            canvas3.drawText("No.",50,120,paint);
+            canvas3.drawText("Date Time",200,120,paint);
+            canvas3.drawText("Risk",700,120,paint);
+            canvas3.drawText("Distance",950,120,paint);
+            canvas3.drawLine(180,80,180,130,paint);
+            canvas3.drawLine(680,80,680,130,paint);
+            canvas3.drawLine(930,80,930,130,paint);
+
+
+
+            paint.setTextAlign(Paint.Align.LEFT);
+            paint.setTextSize(35f);
+            paint.setColor(Color.BLACK);
+            n=220;
+
+            for(int i=0;i<logList2.size();i++){
+                if(logList2.get(i).getRisk().equals("High"))
+                {
+                    paint.setColor(Color.parseColor("#D60F0F"));
+                }
+                else if(logList2.get(i).getRisk().equals("Medium")){
+                    paint.setColor(Color.parseColor("#C68517"));
+                }
+                else{
+                    paint.setColor(Color.parseColor("#49814B"));
+                }
+                canvas3.drawText(String.valueOf(i3++), 50, n, paint);
+                canvas3.drawText(logList2.get(i).getDate() +" " +logList2.get(i).getTime(), 200, n, paint);
+                canvas3.drawText(logList2.get(i).getRisk(), 700, n, paint);
+                canvas3.drawText(String.format("%.2f",logList2.get(i).getDistance()), 960, n, paint);
+//
+                n+=80;
+
+//                if(n>1980)
+//                {
+//                    System.out.println("Loglist i n i2: " + i + " / "+ i2);
+//
+//                    logList3.add(logList2.get(i));
+//
+//                    if(!trigger2){
+//                        i3 = i2;
+//                        trigger2=true;
+//                        System.out.println("Loglist2: " + logList2.get(i));
+//
+//                    }
+//                    newpage2=true;
+//                }
+            }
+
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(2);
+            canvas3.drawRect(20,150,pagewidth-250,n-25,paint);
+
+            pdfDocument.finishPage(page3);
+        }
+
+
+
+
 
         long ct = System.currentTimeMillis();
 

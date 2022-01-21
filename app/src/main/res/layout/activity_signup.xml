@@ -14,82 +14,68 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
         android:text="SDAS"
-        android:textSize="96px"
         android:textColor="@color/colorBlack"
+        android:textSize="96px"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="910px"
-        android:layout_height="72dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:textStyle="bold"
-        android:textSize="40px"
-        android:paddingLeft="60dp"
-        android:hint="Name"
-        android:textColor="@color/colorBlack"
-        android:background="@drawable/bg_txt_username"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="910px"
-        android:layout_height="72dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:textStyle="bold"
-        android:textSize="40px"
-        android:paddingLeft="60dp"
-        android:hint="Email"
-        android:textColor="@color/colorBlack"
-        android:background="@drawable/bg_txt_username"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="910px"
-        android:layout_height="72dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:textStyle="bold"
-        android:textSize="40px"
-        android:paddingLeft="60dp"
-        android:hint="Password"
-        android:textColor="@color/colorBlack"
-        android:inputType="textPassword"
-        android:background="@drawable/bg_txt_password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
-
-
-    <TextView
-        android:id="@+id/btn_reset_password"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Forgot your password?"
-        android:textSize="32px"
-        android:textColor="@color/colorBlack"
-        android:textStyle="bold"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.883"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        android:orientation="vertical"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="910px"
+            android:layout_height="72dp"
+            android:hint="Name"
+            android:textStyle="bold"
+            android:textSize="40px"
+            android:paddingLeft="60dp"
+            android:textColor="@color/colorBlack"
+            android:background="@drawable/bg_txt_username"
+            />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="910px"
+            android:layout_height="72dp"
+            android:textStyle="bold"
+            android:textSize="40px"
+            android:paddingLeft="60dp"
+            android:hint="Email"
+            android:textColor="@color/colorBlack"
+            android:background="@drawable/bg_txt_username"
+             />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="910px"
+            android:layout_height="72dp"
+            android:textStyle="bold"
+            android:textSize="40px"
+            android:paddingLeft="60dp"
+            android:hint="Password"
+            android:textColor="@color/colorBlack"
+            android:inputType="textPassword"
+            android:background="@drawable/bg_txt_password"
+             />
+
+    </LinearLayout>
 
 
-<!--    <TextView-->
+    <!--    <TextView-->
 <!--        android:id="@+id/skip"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
@@ -168,5 +154,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btn_reset_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Forgot your password?"
+        android:textColor="@color/colorBlack"
+        android:textSize="32px"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.895"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
