@@ -119,8 +119,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 String uName = dataSnapshot.child("name").getValue(String.class);
                 String uEmail = dataSnapshot.child("email").getValue(String.class);
 
+                System.out.println("name: " + uName + "/ " +uEmail);
+
+
                 mEditor.putString("name", uName);
                 mEditor.putString("email", uEmail);
+
+                mEditor.apply();
+
+                String name = mPreferences.getString("name", "");
+                String email = mPreferences.getString("email", "");
+
+                System.out.println("SHARED: " + name + "/ " +email);
+
 
                 userName.setText(uName);
                 userEmail.setText(uEmail);
@@ -248,6 +259,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
         if(R.id.trackButton == v.getId()){
+//            publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+//            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
+
             Intent ishintent = new Intent(this, TrackingService.class);
             PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
             AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -257,6 +271,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             startBroadCastReceiver();
             Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
 
+            publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
+
+
 
 //            startService(new Intent(this, TrackingService.class));
 //            Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
@@ -264,7 +282,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         if(R.id.stopButton == v.getId()){
             publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+            publicLocation.child(Common.loggedUser.getUid()).removeValue();
+//            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
 
             Intent intent = new Intent(this, HomeActivity.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1253, intent, 0);

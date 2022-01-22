@@ -72,13 +72,13 @@ public class TrackingService extends Service {
         SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         String time = stf.format(Calendar.getInstance().getTime());
 
-        System.out.println("Start service at , " + time);
+//        System.out.println("Start service at , " + time);
         updateLocation();
         user_history = FirebaseDatabase.getInstance().getReference(Common.HISTORY).child(Common.loggedUser.getUid());
 
         //job completed. Rest for 5 second before doing another one
         try {
-            Thread.sleep(5000);
+            Thread.sleep(15000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -89,9 +89,9 @@ public class TrackingService extends Service {
 
     private void buildLocationRequest() {
         locationRequest = new LocationRequest();
-        locationRequest.setSmallestDisplacement(0.1f);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setInterval(2000);
+        locationRequest.setSmallestDisplacement(10f);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -114,7 +114,10 @@ public class TrackingService extends Service {
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(this, MyLocationReceiver.class);
         intent.setAction(MyLocationReceiver.ACTION);
+//        intent.putExtra("trackStatus", true);
+
 //        System.out.println("PI = " + intent);
+
 
 //        return PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
