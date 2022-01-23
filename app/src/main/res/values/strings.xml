@@ -1,13 +1,10 @@
 <resources>
     <string name="app_name">SDAS</string>
-
     <string name="close">Close</string>
     <string name="open">Open</string>
-    <string name="title_activity_tracking">Map</string>
     <string name="launch_activity">Launch activity</string>
     <string name="location_unknown">Location unknown</string>
     <string name="location_updates_label">Location Updates</string>
-
     <string name="permission_rationale">Location permission is needed for core functionality</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
@@ -15,16 +12,13 @@
     <string name="ok">OK</string>
     <string name="request_location_updates">Request location updates</string>
     <string name="remove_location_updates">Remove location updates</string>
-
     <string name="location_updated">Location Updated: %1$s</string>
-
     <string name="total_cases">Total Cases</string>
     <string name="covid_19">COVID-19</string>
     <string name="total_recovered">Total Recovered</string>
     <string name="total_deaths">Total Deaths</string>
     <string name="test_text">0</string>
     <string name="country_name">Country Name</string>
-
     <string name="cases_today">Cases Today</string>
     <string name="deaths_today">Deaths Today</string>
     <string name="active_cases">Active Cases</string>
@@ -33,23 +27,18 @@
     <string name="deaths_per_million">Deaths Per Million</string>
     <string name="refresh">Refresh</string>
     <string name="search">Search</string>
-
     <string name="risk_high">High Risk</string>
     <string name="risk_medium">Medium Risk</string>
     <string name="risk_low">Low Risk</string>
-
-
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signed_in">Signed in</string>
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out</string>
     <string name="homemsg"><b><font size="26">Social Distancing</font></b><font size="7">\n\n</font>Get alerted when you are closer to someone within 1.5 meter. \nLocation must be turned on.</string>
-
     <string-array name="risk_array">
         <item>High</item>
         <item>Medium</item>
         <item>Low</item>
     </string-array>
-
 
 </resources>
