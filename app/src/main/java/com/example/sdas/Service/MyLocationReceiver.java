@@ -93,7 +93,12 @@ public class MyLocationReceiver extends BroadcastReceiver {
                     Location location = result.getLastLocation();
 
                     if (Common.loggedUser != null) {
-                        publicLocation.child(Common.loggedUser.getUid()).setValue(location);
+                        float accuracy = location.getAccuracy();
+                        if(accuracy>=20)
+                        {
+                            publicLocation.child(Common.loggedUser.getUid()).setValue(location);
+                        }
+
 
 //                        publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
 

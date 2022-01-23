@@ -267,13 +267,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
                 AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 //            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),1000, pintent);
-                alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pintent);
+                alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 15000, pintent);
 //            startService(new Intent(this, TrackingService.class));
                 startBroadCastReceiver();
                 Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Please turn on" + " your location...", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override public void run() {
