@@ -310,37 +310,38 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                         }
                                         if (distance <= 1.0 && distance >= 0.5) {
                                             risk = "Medium";
-                                            }
-                                            if (distance <= 1.5 && distance >= 1.0) {
-                                                risk = "Low";
-                                            }
+                                        }
+                                        if (distance <= 1.5 && distance >= 1.0) {
+                                            risk = "Low";
+                                        }
 
-                                            History history = new History();
+                                        History history = new History();
 
-                                            history.setDistance(roundOffDist);
-                                            history.setDate(date);
-                                            history.setTime(time);
-                                            history.setLatitudeA(currentUserLatA);
-                                            history.setLongitudeA(currentUserLongA);
-                                            history.setLatitudeB(latitudeB);
-                                            history.setLongitudeB(longitudeB);
-                                            history.setRisk(risk);
-                                            history.setUserkey(key);
+                                        history.setDistance(roundOffDist);
+                                        history.setDate(date);
+                                        history.setTime(time);
+                                        history.setLatitudeA(currentUserLatA);
+                                        history.setLongitudeA(currentUserLongA);
+                                        history.setLatitudeB(latitudeB);
+                                        history.setLongitudeB(longitudeB);
+                                        history.setRisk(risk);
+                                        history.setUserkey(key);
 //                                            history.setTimestamp(history.getTimestampLong());
 
-                                            history.setTimestamp(ct);
+                                        history.setTimestamp(ct);
 
-                                            putDouble(mEditor, "dist", distance);
-                                            mEditor.apply();
+                                        putDouble(mEditor, "dist", distance);
+                                        mEditor.apply();
 
                                         listhistory.setValue(history);
                                         notification(roundOffDist, context);
-                                        }
+                                    }
 
                                 }
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         trackingUserLocation.removeEventListener(this);

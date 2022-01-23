@@ -19,8 +19,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
         History, HistoryAdapter.HistoryViewholder> {
 
     public HistoryAdapter(
-            @NonNull FirebaseRecyclerOptions<History> options)
-    {
+            @NonNull FirebaseRecyclerOptions<History> options) {
         super(options);
     }
 
@@ -30,8 +29,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
     @Override
     protected void
     onBindViewHolder(@NonNull HistoryViewholder holder,
-                     int position, @NonNull History model)
-    {
+                     int position, @NonNull History model) {
 //        Log.d(TAG, "<< Setting data to viewholder >>");
 
         // Add *variables* from model class (here
@@ -41,15 +39,15 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
         holder.time.setText(model.getTime());
 
 //        String stringdouble= Double.toString(model.getDistance());
-        String stringdouble= String.format("%.2f", model.getDistance());
+        String stringdouble = String.format("%.2f", model.getDistance());
         holder.distance.setText(stringdouble + " meter");
 
         holder.risk.setText(model.getRisk());
-        if(model.getRisk().equals("High"))
+        if (model.getRisk().equals("High"))
             holder.background.setBackgroundColor(Color.parseColor("#FCD9D9"));
 //            holder.risk.setTextColor(Color.parseColor("#D60F0F"));
 
-        else if(model.getRisk().equals("Medium"))
+        else if (model.getRisk().equals("Medium"))
             holder.background.setBackgroundColor(Color.parseColor("#FFF0D6"));
 //            holder.risk.setTextColor(Color.parseColor("#FFA000"));
         else
@@ -63,8 +61,7 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
     @Override
     public HistoryViewholder
     onCreateViewHolder(@NonNull ViewGroup parent,
-                       int viewType)
-    {
+                       int viewType) {
         View view
                 = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_history, parent, false);
@@ -76,8 +73,8 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
             extends RecyclerView.ViewHolder {
         TextView date, time, distance, risk;
         ConstraintLayout background;
-        public HistoryViewholder(@NonNull View itemView)
-        {
+
+        public HistoryViewholder(@NonNull View itemView) {
             super(itemView);
 
             date = itemView.findViewById(R.id.tvDate);
@@ -89,11 +86,4 @@ public class HistoryAdapter extends FirebaseRecyclerAdapter<
 
         }
     }
-
-
-
-//    @Override
-//    public History getItem(int position) {
-//        return super.getItem(getItemCount() - 1 - position);
-//    }
 }

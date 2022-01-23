@@ -179,7 +179,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
                         break;
                 }
                 return false;
-
             }
         });
 
@@ -195,8 +194,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
                 userName.setText(uName);
                 userEmail.setText(uEmail);
-
-
             }
 
             @Override
@@ -204,7 +201,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         });
 
         Paper.init(this);
-
     }
 
     public void onClick(View v) {
@@ -330,7 +326,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
         boolean trigger=false;
         boolean trigger2=false;
 
-
         int i2 = 0, i3=0;
 
         for(int i=0;i<logList.size();i++){
@@ -350,17 +345,13 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 //            paint.setTextAlign(Paint.Align.RIGHT);
             canvas.drawText(String.format("%.2f",logList.get(i).getDistance()), 960, n, paint);
 
-
-
             n+=80;
 
             if(n>2130)
             {
 //                System.out.println("Loglist: " + logList.get(i));
 //                System.out.println("Loglist i: " + i);
-
                 logList2.add(logList.get(i));
-
                 if(!trigger){
                     i2 = i;
                     trigger=true;
@@ -369,7 +360,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
                 }
                 newpage1=true;
             }
-
         }
 
         paint.setStyle(Paint.Style.STROKE);
@@ -399,8 +389,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             canvas2.drawLine(680,80,680,130,paint);
             canvas2.drawLine(930,80,930,130,paint);
 
-
-
             paint.setTextAlign(Paint.Align.LEFT);
             paint.setTextSize(35f);
             paint.setColor(Color.BLACK);
@@ -421,25 +409,20 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
                 canvas2.drawText(logList2.get(i).getDate() +" " +logList2.get(i).getTime(), 200, n, paint);
                 canvas2.drawText(logList2.get(i).getRisk(), 700, n, paint);
                 canvas2.drawText(String.format("%.2f",logList2.get(i).getDistance()), 960, n, paint);
-//
                 n+=80;
 
                 if(n>1980)
                 {
                     System.out.println("Loglist i n i2: " + i + " / "+ i2);
-
                     logList3.add(logList2.get(i));
-
                     if(!trigger2){
                         i3 = i2;
                         trigger2=true;
                         System.out.println("Loglist2: " + logList2.get(i));
-
                     }
                     newpage2=true;
                 }
             }
-
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);
             canvas2.drawRect(20,150,pagewidth-250,n-25,paint);
@@ -468,8 +451,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             canvas3.drawLine(680,80,680,130,paint);
             canvas3.drawLine(930,80,930,130,paint);
 
-
-
             paint.setTextAlign(Paint.Align.LEFT);
             paint.setTextSize(35f);
             paint.setColor(Color.BLACK);
@@ -490,7 +471,6 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
                 canvas3.drawText(logList2.get(i).getDate() +" " +logList2.get(i).getTime(), 200, n, paint);
                 canvas3.drawText(logList2.get(i).getRisk(), 700, n, paint);
                 canvas3.drawText(String.format("%.2f",logList2.get(i).getDistance()), 960, n, paint);
-//
                 n+=80;
 
 //                if(n>1980)
@@ -515,14 +495,7 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
 
             pdfDocument.finishPage(page3);
         }
-
-
-
-
-
         long ct = System.currentTimeMillis();
-
-
 //        Random rand = new Random();
         output = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS), "SDAS_LOG"+"/Report"+ct+".pdf");
@@ -556,34 +529,4 @@ public class DetectionLogActivity extends AppCompatActivity implements View.OnCl
             }
         }
     }
-
-
-//    @Override
-//    public boolean onQueryTextSubmit(String query) {
-//        // This method can be used when a query is submitted eg. creating search history using SQLite DB
-//
-//        Toast.makeText(this, "Query Inserted", Toast.LENGTH_SHORT).show();
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onQueryTextChange(String newText) {
-//        adapter.filter(newText);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.search_menu, menu);
-//
-//        MenuItem searchItem = menu.findItem(R.id.actionSearch);
-//
-//        SearchView searchView = (SearchView) searchItem.getActionView();
-//        searchView.setQueryHint("Search People");
-//        searchView.setOnQueryTextListener(this);
-//        searchView.setIconified(false);
-//
-//        return true;
-//    }
 }

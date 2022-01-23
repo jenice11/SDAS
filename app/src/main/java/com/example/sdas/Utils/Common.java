@@ -1,8 +1,6 @@
 package com.example.sdas.Utils;
 
 import com.example.sdas.Model.User;
-import com.example.sdas.Remote.IFCMService;
-import com.example.sdas.Remote.RetrofitClient;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -25,11 +23,7 @@ public class Common {
     public static User loggedUser;
     public static User trackingUser;
 
-    public static IFCMService getFCMService()
-    {
-        return RetrofitClient.getClient("https://fcm.googleapis.com/")
-                .create(IFCMService.class);
-    }
+
 
     public static Date convertTimeStampToDate(long time)
     {

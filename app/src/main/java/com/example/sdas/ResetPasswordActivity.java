@@ -51,10 +51,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     inputEmail.setError("Email is empty");
                     return;
                 }
-                if(isValidEmail(email) ==false){
+                if (isValidEmail(email) == false) {
                     inputEmail.setError("Email format is invalid");
                     return;
-
                 }
 
                 progressBar.setVisibility(View.VISIBLE);
@@ -67,7 +66,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(ResetPasswordActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
                                 }
-
                                 progressBar.setVisibility(View.GONE);
                             }
                         });

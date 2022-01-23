@@ -27,18 +27,14 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.sdas.Utils.Common;
 import com.example.sdas.Utils.VolleyController;
-
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -57,22 +53,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StatsActivity extends AppCompatActivity {
-    //json API object url
-    private String urlJsonObj = "https://corona.lmao.ninja/v3/covid-19/countries/malaysia";
-    private static String TAG = StatsActivity.class.getSimpleName();
-    // Progress dialog
-    private ProgressDialog pDialog;
-    private TextView txtCases, txtDeaths, txtTodayDeaths, txtTodayCases, txtActive, txtCritical, txtRecovered;
+    private static final String TAG = StatsActivity.class.getSimpleName();
     PieChart pieChart;
-    TextView name, email, empid;
-    ImageView navprofile;
-
     //Header & Navigation Menu
     DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
     Toolbar toolbar;
-    TextView userName,userEmail;
+    TextView userName, userEmail;
+    //json API object url
+    private final String urlJsonObj = "https://corona.lmao.ninja/v3/covid-19/countries/malaysia";
+    private TextView txtCases, txtDeaths, txtActive, txtRecovered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,12 +87,9 @@ public class StatsActivity extends AppCompatActivity {
         txtDeaths = findViewById(R.id.txt_deaths);
         txtActive = findViewById(R.id.txt_active);
         txtRecovered = findViewById(R.id.txt_recovered);
-
         pieChart = findViewById(R.id.pieChart_view);
-
         userName = (TextView) navView.findViewById(R.id.name);
         userEmail = (TextView) navView.findViewById(R.id.email);
-
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDb = mDatabase.getReference();
@@ -118,13 +106,9 @@ public class StatsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
-
-        //progress dialog
-        // pDialog = new ProgressDialog(this);
-        // pDialog.setMessage("loading...");
-        // pDialog.setCancelable(false);
 
         //parsing json data
         parseJSON();
@@ -134,8 +118,6 @@ public class StatsActivity extends AppCompatActivity {
             parseJSON();
             pullToRefresh.setRefreshing(false);
         });
-        //bottom navigation
-//        BottomNavigationView navigation = findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -143,16 +125,16 @@ public class StatsActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 switch (id) {
                     case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         break;
                     case R.id.nav_detection_log:
-                        startActivity(new Intent(getApplicationContext(),DetectionLogActivity.class));
+                        startActivity(new Intent(getApplicationContext(), DetectionLogActivity.class));
                         break;
                     case R.id.nav_covid_stat:
-                        startActivity(new Intent(getApplicationContext(),StatsActivity.class));
+                        startActivity(new Intent(getApplicationContext(), StatsActivity.class));
                         break;
                     case R.id.nav_report:
-                        startActivity(new Intent(getApplicationContext(),ReportActivity.class));
+                        startActivity(new Intent(getApplicationContext(), ReportActivity.class));
                         break;
 
                     case R.id.nav_sign_out:
@@ -161,7 +143,6 @@ public class StatsActivity extends AppCompatActivity {
                         break;
                 }
                 return false;
-
             }
         });
 
@@ -171,7 +152,6 @@ public class StatsActivity extends AppCompatActivity {
      * getting json object {
      */
     private void parseJSON() {
-        // showpDialog();
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 urlJsonObj, null, new Response.Listener<JSONObject>() {
             @Override
@@ -186,39 +166,26 @@ public class StatsActivity extends AppCompatActivity {
                     String Rrecovered = response.getString("recovered");
                     String Ractive = response.getString("active");
 
-
                     txtCases.setText(Rcases);
-
                     txtDeaths.setText(Rdeaths);
-
                     txtRecovered.setText(Rrecovered);
                     txtActive.setText(Ractive);
 
-
                     initPieChart();
-
-                    showPieChart(Rcases,Rdeaths,Rrecovered,Ractive);
-
-
+                    showPieChart(Rcases, Rdeaths, Rrecovered, Ractive);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(),
                             "Error: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 }
-
-                // hidepDialog();
             }
-
-
         },
-
                 error -> {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
                     Toast.makeText(getApplicationContext(),
                             error.getMessage(), Toast.LENGTH_SHORT).show();
                     // hide the progress dialog
-                    // hidepDialog();
                 }) {
 
             //cache for 24 if user not connected to internet
@@ -258,36 +225,21 @@ public class StatsActivity extends AppCompatActivity {
                 }
             }
         };
-
         // Adding request to request queue
         VolleyController.getInstance().addToRequestQueue(jsonObjReq);
-
-
     }
 
-
-    private void showpDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hidepDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
-    }
-
-    private void showPieChart(String Rcases,String Rdeaths,String Rrecovered,String Ractive){
+    private void showPieChart(String Rcases, String Rdeaths, String Rrecovered, String Ractive) {
 
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
         String label = "";
 
         //initializing data
         Map<String, Integer> typeAmountMap = new HashMap<>();
-        typeAmountMap.put("Total Cases",Integer.parseInt(Rcases));
-        typeAmountMap.put("Recovered",Integer.parseInt(Rrecovered));;
-        typeAmountMap.put("Active",Integer.parseInt(Ractive));
-        typeAmountMap.put("Deaths",Integer.parseInt(Rdeaths));
-
+        typeAmountMap.put("Total Cases", Integer.parseInt(Rcases));
+        typeAmountMap.put("Recovered", Integer.parseInt(Rrecovered));
+        typeAmountMap.put("Active", Integer.parseInt(Ractive));
+        typeAmountMap.put("Deaths", Integer.parseInt(Rdeaths));
 
         //initializing colors for the entries
         ArrayList<Integer> colors = new ArrayList<>();
@@ -296,16 +248,13 @@ public class StatsActivity extends AppCompatActivity {
         colors.add(Color.parseColor("#7A2CF0"));
         colors.add(Color.parseColor("#43A047"));
 
-
         //input data and fit data into pie chart entry
-        for(String type: typeAmountMap.keySet()){
+        for (String type : typeAmountMap.keySet()) {
             pieEntries.add(new PieEntry(typeAmountMap.get(type).floatValue(), type));
         }
 
-
-
         //collecting the entries with label name
-        PieDataSet pieDataSet = new PieDataSet(pieEntries,label);
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, label);
         //setting text size of the value
         pieDataSet.setValueTextSize(12f);
         //providing color list for coloring different entries
@@ -316,22 +265,18 @@ public class StatsActivity extends AppCompatActivity {
 //        pieData.setValueFormatter(new PercentFormatter());
         // usage on whole data object
         pieData.setValueFormatter(new MyValueFormatter());
-
         pieData.setDrawValues(true);
         pieChart.setDrawSliceText(false);
-
         pieChart.setData(pieData);
         pieChart.invalidate();
-
     }
 
-    private void initPieChart(){
+    private void initPieChart() {
         //using percentage as values instead of amount
         pieChart.setUsePercentValues(true);
 
         //remove the description label on the lower left corner, default true if not set
         pieChart.getDescription().setEnabled(false);
-
         //enabling the user to rotate the chart, default true
         pieChart.setRotationEnabled(true);
         //adding friction when rotating the pie chart
@@ -345,25 +290,18 @@ public class StatsActivity extends AppCompatActivity {
         pieChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
         //setting the color of the hole in the middle, default white
         pieChart.setHoleColor(Color.parseColor("#000000"));
-
-//        pieChart.setHoleRadius(10f);
-//        pieChart.setTransparentCircleRadius(0f);
     }
 
     public class MyValueFormatter implements IValueFormatter {
-
-        private DecimalFormat mFormat;
-
+        private final DecimalFormat mFormat;
         public MyValueFormatter() {
             mFormat = new DecimalFormat("###,###,###,##0.0");
         }
 
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            if(value < 5) return "";
+            if (value < 5) return "";
             else return mFormat.format(value) + " %";
         }
     }
-
-
 }

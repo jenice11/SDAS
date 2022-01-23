@@ -1,16 +1,14 @@
 package com.example.sdas.Fragment;
+
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.example.sdas.R;
 import com.example.sdas.Utils.Common;
@@ -44,16 +42,14 @@ import java.util.Map;
  */
 public class DailyFragment extends Fragment {
     private static final String TAG = "DailyFragment";
-    TextView textViewScore,textViewComment;
-    PieChart pieChart;
-    DatabaseReference user_history;
-    List<String> list = new ArrayList<>();
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    TextView textViewScore, textViewComment;
+    PieChart pieChart;
+    DatabaseReference user_history;
+    List<String> list = new ArrayList<>();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -97,7 +93,7 @@ public class DailyFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_daily, container, false);
         textViewScore = (TextView) view.findViewById(R.id.textViewScore);
         textViewComment = (TextView) view.findViewById(R.id.textViewComment);
-        pieChart = (PieChart)view.findViewById(R.id.pieChart_view);
+        pieChart = (PieChart) view.findViewById(R.id.pieChart_view);
 
         getDataforSummaryHistoryDaily();
 
@@ -124,12 +120,10 @@ public class DailyFragment extends Fragment {
         user_history.orderByChild("timestamp").startAt(todayStart).endAt(todayEnd).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    for (DataSnapshot snap : snapshot.getChildren())
-                    {
-                        for (DataSnapshot snapchild : snap.getChildren()){
-                            if(snapchild.getKey().equals("risk"))
-                            {
+                if (snapshot.exists()) {
+                    for (DataSnapshot snap : snapshot.getChildren()) {
+                        for (DataSnapshot snapchild : snap.getChildren()) {
+                            if (snapchild.getKey().equals("risk")) {
                                 list.add(snapchild.getValue().toString());
                             }
                         }
@@ -137,10 +131,10 @@ public class DailyFragment extends Fragment {
                         int countMedium = Collections.frequency(list, "Medium");
                         int countLow = Collections.frequency(list, "Low");
 
-                        calculateScore(countHigh,countMedium,countLow);
+                        calculateScore(countHigh, countMedium, countLow);
                     }
-                }else{
-                    calculateScore(0,0,0);
+                } else {
+                    calculateScore(0, 0, 0);
                 }
                 list.clear();
             }
@@ -152,40 +146,35 @@ public class DailyFragment extends Fragment {
         });
     }
 
-    private void calculateScore(int countHigh, int countMedium, int countLow){
+    private void calculateScore(int countHigh, int countMedium, int countLow) {
         int high = 3;
         int medium = 2;
         int low = 1;
-        int scorePositive,scoreNegative,overallScore;
+        int scorePositive, scoreNegative, overallScore;
         String comment = null;
 
         scorePositive = 100;
         scoreNegative = (countHigh * high) + (countMedium * medium) + (countLow * low);
         overallScore = scorePositive - scoreNegative;
 
-        if(scoreNegative<=20)
-        {
+        if (scoreNegative <= 20) {
             textViewScore.setTextColor(Color.parseColor("#43A047"));
             textViewComment.setTextColor(Color.parseColor("#43A047"));
             comment = "You are at low risk!";
-        }
-        else if(scoreNegative <=40 && scoreNegative >=20)
-        {
+        } else if (scoreNegative <= 40 && scoreNegative >= 20) {
             textViewScore.setTextColor(Color.parseColor("#A84420"));
             textViewComment.setTextColor(Color.parseColor("#A84420"));
             comment = "You are at medium risk!";
-        }
-        else if(scoreNegative >=40)
-        {
+        } else if (scoreNegative >= 40) {
             textViewScore.setTextColor(Color.RED);
             textViewComment.setTextColor(Color.RED);
             comment = "You are at high risk!";
         }
 
-        if(overallScore == 100){
+        if (overallScore == 100) {
             textViewScore.setText(String.valueOf(overallScore));
             textViewComment.setText("No risk");
-        }else{
+        } else {
             textViewScore.setText(String.valueOf(overallScore));
             textViewComment.setText(comment);
         }
@@ -193,7 +182,7 @@ public class DailyFragment extends Fragment {
 //        textViewComment.setText(comment);
 
         initPieChart();
-        showPieChart(scorePositive,scoreNegative);
+        showPieChart(scorePositive, scoreNegative);
     }
 
     private void showPieChart(int scorePositive, int scoreNegative) {
@@ -204,9 +193,8 @@ public class DailyFragment extends Fragment {
         ArrayList<Integer> colors = new ArrayList<>();
 
 
-
-        typeAmountMap.put("Positive",scorePositive);
-        typeAmountMap.put("Negative",scoreNegative);
+        typeAmountMap.put("Positive", scorePositive);
+        typeAmountMap.put("Negative", scoreNegative);
 
         //initializing colors for the entries
         colors.add(Color.parseColor("#DAF1FB"));
@@ -214,12 +202,12 @@ public class DailyFragment extends Fragment {
 
 
         //input data and fit data into pie chart entry
-        for(String type: typeAmountMap.keySet()){
+        for (String type : typeAmountMap.keySet()) {
             pieEntries.add(new PieEntry(typeAmountMap.get(type).floatValue(), type));
         }
 
         //collecting the entries with label name
-        PieDataSet pieDataSet = new PieDataSet(pieEntries,label);
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, label);
         //setting text size of the value
         pieDataSet.setValueTextSize(12f);
         //providing color list for coloring different entries
@@ -239,7 +227,7 @@ public class DailyFragment extends Fragment {
 
     }
 
-    private void initPieChart(){
+    private void initPieChart() {
         //using percentage as values instead of amount
         pieChart.setUsePercentValues(true);
 
@@ -266,7 +254,7 @@ public class DailyFragment extends Fragment {
 
     public class MyValueFormatter implements IValueFormatter {
 
-        private DecimalFormat mFormat;
+        private final DecimalFormat mFormat;
 
         public MyValueFormatter() {
             mFormat = new DecimalFormat("###,###,###,##0.0");
@@ -274,7 +262,7 @@ public class DailyFragment extends Fragment {
 
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            if(value < 5) return "";
+            if (value < 5) return "";
             else return mFormat.format(value) + " %";
         }
     }

@@ -44,28 +44,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText inputEmail, inputPassword;
     private ProgressBar progressBar;
-    private TextView textview,btnSignup,btnReset;
+    private TextView textview, btnSignup, btnReset;
     private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-//        // Configure sign-in to request the user's ID, email address, and basic
-//        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail()
-//                .build();
-//
-//        // Build a GoogleSignInClient with the options specified by gso.
-//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-//
-//        // Set the dimensions of the sign-in button.
-//        SignInButton signInButton = findViewById(R.id.sign_in_button);
-//        signInButton.setSize(SignInButton.SIZE_STANDARD);
-//
-//        findViewById(R.id.sign_in_button).setOnClickListener(this);
 
         auth = FirebaseAuth.getInstance();
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
@@ -78,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         btnSignup = (TextView) findViewById(R.id.btn_signup);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (TextView) findViewById(R.id.btn_reset_password);
-//        signInButton.setOnClickListener(this);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,76 +94,8 @@ public class LoginActivity extends AppCompatActivity {
         Paper.init(this);
     }
 
-//    //google login start
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        // Check for existing Google Sign In account, if the user is already signed in
-//        // the GoogleSignInAccount will be non-null.
-////        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        System.out.println("This user is login ");
-//
-////        updateUI(account);
-//    }
-//
-//    private void updateUI(GoogleSignInAccount account) {
-//        if (account != null) {
-//            Toast.makeText(this,"You Signed In successfully",Toast.LENGTH_LONG).show();
-//
-//            startActivity(new Intent(this,HomeActivity.class));
-//        } else {
-//            Toast.makeText(this,"Google Sign-in Failed",Toast.LENGTH_LONG).show();
-//
-//        }
-//    }
-//
-//
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.sign_in_button:
-//                signIn();
-//                break;
-//            // ...
-//        }
-//    }
-//
-//    private void signIn() {
-//        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-//        startActivityForResult(signInIntent, RC_SIGN_IN);
-//    }
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-//        if (requestCode == RC_SIGN_IN) {
-//            // The Task returned from this call is always completed, no need to attach
-//            // a listener.
-//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//            handleSignInResult(task);
-//        }
-//    }
-//
-//    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-//        try {
-//            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//
-//            // Signed in successfully, show authenticated UI.
-//            updateUI(account);
-//        } catch (ApiException e) {
-//            // The ApiException status code indicates the detailed failure reason.
-//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-//            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-//            updateUI(null);
-//        }
-//    }
-//    //google login end
-
     //normal login start
-    public void login()
-    {
+    public void login() {
         final String email = inputEmail.getText().toString();
         final String password = inputPassword.getText().toString();
 
@@ -187,23 +103,17 @@ public class LoginActivity extends AppCompatActivity {
             inputEmail.setError("Email is empty");
             return;
         }
-
-        if(isValidEmail(email) ==false){
+        if (isValidEmail(email) == false) {
             inputEmail.setError("Email format is invalid");
             return;
-
         }
-
         if (TextUtils.isEmpty(password)) {
             inputPassword.setError("Password is empty");
             return;
         }
-
-
         if (password.length() < 6) {
             inputPassword.setError("Password too short, enter minimum 6 characters");
             return;
-
         }
 
         progressBar.setVisibility(View.VISIBLE);
@@ -221,17 +131,15 @@ public class LoginActivity extends AppCompatActivity {
                             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 //                            System.out.println("CURRENT USER UID: " + firebaseUser.getUid());
 
-                            if (firebaseUser.isEmailVerified()){
+                            if (firebaseUser.isEmailVerified()) {
                                 user_information.orderByKey()
                                         .equalTo(firebaseUser.getUid())
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                if(dataSnapshot.getValue() == null)
-                                                {
+                                                if (dataSnapshot.getValue() == null) {
                                                     Toast.makeText(getApplicationContext(), "User doesn't exist!", Toast.LENGTH_SHORT).show();
-                                                }
-                                                else{
+                                                } else {
                                                     Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
 
 //                                                    DatabaseReference publicLocation;
@@ -239,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
 //                                                    publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
                                                 }
 
-                                                Paper.book().write(Common.USER_UID_SAVE_KEY,Common.loggedUser.getUid());
+                                                Paper.book().write(Common.USER_UID_SAVE_KEY, Common.loggedUser.getUid());
                                             }
 
                                             @Override
@@ -249,13 +157,12 @@ public class LoginActivity extends AppCompatActivity {
                                         });
                                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                 startActivity(intent);
-                            }
-                            else
-                            {
+                            } else {
                                 Toast.makeText(getApplicationContext(), "Email not verified\nPlease check your email", Toast.LENGTH_LONG).show();
 
                                 new Handler().postDelayed(new Runnable() {
-                                    @Override public void run() {
+                                    @Override
+                                    public void run() {
                                         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -289,20 +196,16 @@ public class LoginActivity extends AppCompatActivity {
                                         builder.setMessage("Do you want to resend email verification link?")
                                                 .setPositiveButton("Yes", dialogClickListener)
                                                 .setNegativeButton("No", dialogClickListener).show();
-                                    } }, 2500);
-
-
+                                    }
+                                }, 2500);
                             }
-
-
-
-//                            finish();
                         }
                     }
                 });
 
 
     }
+
     //end normal login
     public final boolean isValidEmail(CharSequence target) {
         if (TextUtils.isEmpty(target)) {
@@ -314,6 +217,4 @@ public class LoginActivity extends AppCompatActivity {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
         }
     }
-
-
 }

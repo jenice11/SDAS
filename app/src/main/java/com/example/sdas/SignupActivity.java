@@ -16,13 +16,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.sdas.Model.User;
 import com.example.sdas.Utils.Common;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,8 +32,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 public class SignupActivity extends AppCompatActivity {
-
-    private TextView skip, textview, signin, btnResetPassword;
+    private TextView textview, signin, btnResetPassword;
     private EditText inputEmail, inputPassword, inputName;
     private Button btnSignUp;
     private ProgressBar progressBar;
@@ -41,7 +40,6 @@ public class SignupActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     private DatabaseReference mDatabase;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +54,12 @@ public class SignupActivity extends AppCompatActivity {
 
         textview = (TextView) findViewById(R.id.textView4);
         btnResetPassword = (TextView) findViewById(R.id.btn_reset_password);
-//        skip = (TextView) findViewById(R.id.skip);
         signin = (TextView) findViewById(R.id.sign_in_button);
         btnSignUp = (Button) findViewById(R.id.sign_up_button);
         inputName = (EditText) findViewById(R.id.name);
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,18 +71,9 @@ public class SignupActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SignupActivity.this,LoginActivity.class));
+                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
             }
         });
-
-//        skip.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(SignupActivity.this, HomeActivity.class));
-//                mEditor.putString("Hello", "False");
-//                mEditor.commit();
-//            }
-//        });
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,32 +89,25 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    public void register()
-    {
+    public void register() {
         final String name = inputName.getText().toString().trim();
         final String email = inputEmail.getText().toString().trim();
         String password = inputPassword.getText().toString().trim();
-        boolean c1 = false,c2 = false, c3= false;
+        boolean c1 = false, c2 = false, c3 = false;
 
         if (TextUtils.isEmpty(name)) {
             inputName.setError("Name is empty");
             return;
-        }else{
+        } else {
             c1 = true;
         }
 
-        if(isValidEmail(email) == true){
+        if (isValidEmail(email) == true) {
             System.out.println("Email format valid");
             c2 = true;
-        }
-        else{
+        } else {
             inputEmail.setError("Email format is invalid");
         }
-
-//        if (TextUtils.isEmpty(email)) {
-//            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
 
         if (TextUtils.isEmpty(password)) {
             inputPassword.setError("Password is empty");
@@ -137,11 +117,11 @@ public class SignupActivity extends AppCompatActivity {
         if (password.length() < 6) {
             inputPassword.setError("Password too short, enter minimum 6 characters");
             return;
-        }else{
+        } else {
             c3 = true;
         }
 
-        if(c1 == true && c2 == true && c3 == true){
+        if (c1 == true && c2 == true && c3 == true) {
             progressBar.setVisibility(View.VISIBLE);
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             //create user
@@ -154,14 +134,12 @@ public class SignupActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Registration failed." + task.getException(),
                                         Toast.LENGTH_SHORT).show();
                             } else {
-
                                 String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                 User user = new User(uid, email, name);
                                 mDatabase.child(Common.USER_INFORMATION).child(uid).setValue(user);
                                 updateToken(firebaseUser);
 
                                 Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
-
 
                                 firebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -177,20 +155,15 @@ public class SignupActivity extends AppCompatActivity {
                                 });
 
                                 new Handler().postDelayed(new Runnable() {
-                                    @Override public void run() {
+                                    @Override
+                                    public void run() {
                                         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                                    } }, 3800);
-
-
-
-
+                                    }
+                                }, 3800);
                             }
                         }
                     });
         }
-
-
-
 
 
     }
@@ -216,8 +189,8 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
 
-                Toast toast = Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT);
-                View view =toast.getView();
+                Toast toast = Toast.makeText(getApplicationContext(), "" + e.getMessage(), Toast.LENGTH_SHORT);
+                View view = toast.getView();
                 view.setBackgroundColor(Color.GREEN); //any color your want
                 toast.show();
             }

@@ -2,15 +2,18 @@ package com.example.sdas.Model;
 
 
 public class MyLocation {
-    private int accuracy,altitude,bearing,bearingAccuracyDegrees,speed,speedAccuracyMetersPerSecond,VerticalAccuracyMeters;
-    private boolean complete,fromMockProvider;
+    private static final int nextLocationNo = 1;
+    private final int locationNo = 1;
+    private int accuracy, altitude, bearing, bearingAccuracyDegrees, speed, speedAccuracyMetersPerSecond, VerticalAccuracyMeters;
+    private boolean complete, fromMockProvider;
     private String provider;
-    private long time,elapsedRealtimeNanos;
+    private long time, elapsedRealtimeNanos;
     private double latitude;
     private double longitude;
-    private int locationNo = 1;
-    private static int nextLocationNo = 1;
     private boolean trackStatus;
+
+    public MyLocation() {
+    }
 
     public boolean isTrackStatus() {
         return trackStatus;
@@ -18,20 +21,6 @@ public class MyLocation {
 
     public void setTrackStatus(boolean trackStatus) {
         this.trackStatus = trackStatus;
-    }
-
-
-//    @Override
-//    public String toString() {
-//        locationNo = nextLocationNo;
-//        nextLocationNo++;
-//        return "Location No" + locationNo +
-//                ": latitude='" + latitude + '\'' +
-//                ", longitude='" + longitude + '\'' +
-//                '}';
-//    }
-
-    public MyLocation() {
     }
 
     public int getAccuracy() {
