@@ -160,8 +160,8 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 key = postSnapshot.getKey();
-//                                Log.d(TAG, "USER ID KEY: " + key);
-//                                Log.d(TAG, "USER ID CURRENT: " + userKey);
+                                Log.d(TAG, "USER ID KEY: " + key);
+                                Log.d(TAG, "USER ID CURRENT: " + userKey);
 
                                 double latitudeB, longitudeB;
 //                                boolean trackStat = (boolean) postSnapshot.child("trackStatus").getValue();
@@ -201,13 +201,29 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                         String historyuser = hList.get(0).getUserkey();
 //                                        System.out.println("userkey history 2 assigned: " + historyuser);
 
+                                        History history = new History();
+
+                                        history.setDistance(roundOffDist);
+                                        history.setDate(date);
+                                        history.setTime(time);
+                                        history.setLatitudeA(currentUserLatA);
+                                        history.setLongitudeA(currentUserLongA);
+                                        history.setLatitudeB(latitudeB);
+                                        history.setLongitudeB(longitudeB);
+                                        history.setRisk(risk);
+                                        history.setUserkey(key);
+                                        history.setTimestamp(ct);
+
                                         if (!(key.equals(historyuser))) {
-                                            System.out.println("the location userkey same with history key prev");
+                                            System.out.println("new history");
+
+                                            listhistory.setValue(history);
+                                            notification(roundOffDist, context);
                                         } else {
+                                            System.out.println("the location userkey same with history key prev");
                                             long timestamp = hList.get(0).getTimestampLong();
                                             long checktime;
                                             checktime = ct - timestamp;
-
 //                                            System.out.println("History last Timestamp= " + timestamp);
 //                                            System.out.println("Current ct= " + ct);
 
@@ -218,28 +234,14 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                                 double hDistance = hList.get(0).getDistance();
                                                 System.out.println("Check distance" + hDistance + " /// " + roundOffDist);
 
-//                                                if (roundOffDist == hDistance) {
-//                                                    System.out.println("Distance is same as prev history" + hDistance + "--" + roundOffDist + "\nSKIP DIST");
-//                                                } else {
-                                                    History history = new History();
-
-                                                    history.setDistance(roundOffDist);
-                                                    history.setDate(date);
-                                                    history.setTime(time);
-                                                    history.setLatitudeA(currentUserLatA);
-                                                    history.setLongitudeA(currentUserLongA);
-                                                    history.setLatitudeB(latitudeB);
-                                                    history.setLongitudeB(longitudeB);
-                                                    history.setRisk(risk);
-                                                    history.setUserkey(key);
-                                                    history.setTimestamp(ct);
-
+                                                if (roundOffDist == hDistance) {
+                                                    System.out.println("Distance is same as prev history" + hDistance + "--" + roundOffDist + "\nSKIP DIST");
+                                                } else {
                                                     listhistory.setValue(history);
                                                     notification(roundOffDist, context);
 
-                                                    System.out.println("ct more than 1min insert");
                                                     System.out.println("Insert checktime= " + checktime);
-//                                                }
+                                                }
                                             } else {
                                                 System.out.println("Same user - ct less than 1min \n SKIP");
                                             }
@@ -248,7 +250,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
                                         System.out.println("Distance more than 1.5m =: " + distance);
                                     }
                                 }
-
                             }
                         }
                     }
@@ -277,12 +278,7 @@ public class MyLocationReceiver extends BroadcastReceiver {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                 key = postSnapshot.getKey();
-
                                 double latitudeB, longitudeB;
-//                                boolean trackStat = (boolean) postSnapshot.child("trackStatus").getValue();
-//
-//                                if(trackStat==true)
-//                                {
                                 Log.d("LIST", postSnapshot.child("latitude").getValue()
                                         + ", " + postSnapshot.child("longitude").getValue());
 
@@ -296,28 +292,24 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                     Log.d(TAG, "<< Distance 2 == " + distance + " >>");
 
-                                    Double dist = getDouble(mPreferences, "dist", 0);
-                                    System.out.println("Shared prev distance = " + dist);
+//                                    Double dist = getDouble(mPreferences, "dist", 0);
+//                                    System.out.println("Shared prev distance = " + dist);
 
+                                    DatabaseReference listhistory = history.child(Common.loggedUser.getUid()).push();
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                                    String date = sdf.format(Calendar.getInstance().getTime());
 
-                                    if (!(dist.equals(distance))) {
-                                        DatabaseReference listhistory = history.child(Common.loggedUser.getUid()).push();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-                                        String date = sdf.format(Calendar.getInstance().getTime());
+                                    SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                    String time = stf.format(Calendar.getInstance().getTime());
+                                    String risk = "No Risk";
+                                    double roundOffDist = (double) Math.round(distance * 10000) / 10000;
 
-                                        SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                                        String time = stf.format(Calendar.getInstance().getTime());
-                                        String risk = "No Risk";
-
-                                        double roundOffDist = (double) Math.round(distance * 10000) / 10000;
-
-
-                                        if (distance <= 1.5) {
-                                            if (distance <= 0.5 && distance >= 0) {
-                                                risk = "High";
-                                            }
-                                            if (distance <= 1.0 && distance >= 0.5) {
-                                                risk = "Medium";
+                                    if (distance <= 1.5) {
+                                        if (distance <= 0.5 && distance >= 0) {
+                                            risk = "High";
+                                        }
+                                        if (distance <= 1.0 && distance >= 0.5) {
+                                            risk = "Medium";
                                             }
                                             if (distance <= 1.5 && distance >= 1.0) {
                                                 risk = "Low";
@@ -338,31 +330,17 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
                                             history.setTimestamp(ct);
 
-//                                                mEditor.putLong("currentTime", ct);
                                             putDouble(mEditor, "dist", distance);
                                             mEditor.apply();
 
-
-//                                                Double dist = getDouble(mPreferences,"dist", 0);
-//                                                System.out.println("S distance 1= " + distance);
-//                                                System.out.println("S distance 2= " + dist);
-
-                                            listhistory.setValue(history);
-                                            notification(distance, context);
+                                        listhistory.setValue(history);
+                                        notification(roundOffDist, context);
                                         }
-                                    } else {
-                                        System.out.println("Same distance as prev insert= " + distance);
-                                    }
+
                                 }
-//                                }
-//                                else
-//                                {
-//                                    Log.d(TAG, "<< Not Tracked Status >>");
-//                                }
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         trackingUserLocation.removeEventListener(this);

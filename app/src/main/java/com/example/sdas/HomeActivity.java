@@ -271,8 +271,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             startBroadCastReceiver();
             Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
 
-            publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
+//            publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+//            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
 
 
 
@@ -310,7 +310,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         alarmManager.cancel(pendingIntent);
 
         publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-        publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+//        publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
         killBroadCastReceiver();
 
         Log.d(TAG, "App Destroyed + firebase status false");

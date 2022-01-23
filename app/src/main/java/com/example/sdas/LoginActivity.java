@@ -234,9 +234,9 @@ public class LoginActivity extends AppCompatActivity {
                                                 else{
                                                     Common.loggedUser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
 
-                                                    DatabaseReference publicLocation;
-                                                    publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-                                                    publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
+//                                                    DatabaseReference publicLocation;
+//                                                    publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
+//                                                    publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(false);
                                                 }
 
                                                 Paper.book().write(Common.USER_UID_SAVE_KEY,Common.loggedUser.getUid());
