@@ -10,8 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -259,25 +262,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
         if(R.id.trackButton == v.getId()){
-//            publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-//            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
-
-            Intent ishintent = new Intent(this, TrackingService.class);
-            PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
-            AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            if (isLocationEnabled()) {
+                Intent ishintent = new Intent(this, TrackingService.class);
+                PendingIntent pintent = PendingIntent.getService(this, 0, ishintent, 0);
+                AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 //            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),1000, pintent);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pintent);
+                alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 5000, pintent);
 //            startService(new Intent(this, TrackingService.class));
-            startBroadCastReceiver();
-            Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
+                startBroadCastReceiver();
+                Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Please turn on" + " your location...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
-//            publicLocation = FirebaseDatabase.getInstance().getReference(Common.PUBLIC_LOCATION);
-//            publicLocation.child(Common.loggedUser.getUid()).child("trackStatus").setValue(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+                        startActivity(intent);
+                    } }, 3800);
 
+            }
 
-
-//            startService(new Intent(this, TrackingService.class));
-//            Toast.makeText(this, "Start tracking now", Toast.LENGTH_SHORT).show();
         }
 
         if(R.id.stopButton == v.getId()){
@@ -401,6 +405,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
         return edit.putLong(key, Double.doubleToRawLongBits(value));
     }
+
+    // method to check if location is enabled
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+
 
 
 
