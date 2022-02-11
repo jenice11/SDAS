@@ -16,5 +16,5 @@ Covid Global Statistics page\
 Detection Log with download PDF 
 
 *Issue\
-Alarm when resume from background to foreground is not working \
+Distance takes time to be accurate on real devices 
 
